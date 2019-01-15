@@ -8,6 +8,6 @@ class CurrenciesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private lateinit var any: Any
 
     fun setupUi(any: Any) {
-        this.any =any
+        this.any = any
     }
 }

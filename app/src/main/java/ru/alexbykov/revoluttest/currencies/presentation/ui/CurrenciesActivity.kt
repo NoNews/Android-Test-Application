@@ -2,9 +2,13 @@ package ru.alexbykov.revoluttest.currencies.presentation.ui
 
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.alexbykov.revoluttest.R
 import ru.alexbykov.revoluttest.common.presentation.MvpAppCompatActivity
+import ru.alexbykov.revoluttest.currencies.di.Injector
+import ru.alexbykov.revoluttest.currencies.presentation.mvp.CurrenciesPresenter
 import ru.alexbykov.revoluttest.currencies.presentation.mvp.CurrenciesState
 import ru.alexbykov.revoluttest.currencies.presentation.mvp.CurrenciesView
 
@@ -14,8 +18,11 @@ class CurrenciesActivity : MvpAppCompatActivity(), CurrenciesView {
         const val LAYOUT = R.layout.activity_main
     }
 
-    private lateinit var currenciesAdapter: CurrenciesAdapter
+    @InjectPresenter
+    lateinit var currenciesPresenter: CurrenciesPresenter
 
+    @ProvidePresenter
+    fun provideCurrenciesPresenter() = Injector.appComponent.currenciesPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,19 +34,16 @@ class CurrenciesActivity : MvpAppCompatActivity(), CurrenciesView {
 
     private fun setupUi() {
         rv_currencies.layoutManager = LinearLayoutManager(this)
-        rv_currencies.adapter = currenciesAdapter
     }
 
     private fun setupUx() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 
     override fun showState(state: CurrenciesState) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun updateCurrencies(currencies: List<Any>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
