@@ -1,15 +1,14 @@
 package ru.alexbykov.revoluttest.currencies.presentation.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.alexbykov.revoluttest.R
+import ru.alexbykov.revoluttest.common.presentation.MvpAppCompatActivity
 import ru.alexbykov.revoluttest.currencies.presentation.mvp.CurrenciesState
 import ru.alexbykov.revoluttest.currencies.presentation.mvp.CurrenciesView
 
-class CurrenciesActivity : AppCompatActivity(), CurrenciesView {
-
+class CurrenciesActivity : MvpAppCompatActivity(), CurrenciesView {
 
     companion object {
         const val LAYOUT = R.layout.activity_main
