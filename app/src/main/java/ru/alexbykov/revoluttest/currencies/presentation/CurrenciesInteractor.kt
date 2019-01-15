@@ -1,0 +1,3 @@
+package ru.alexbykov.revoluttest.currencies.presentation
+
+interface CurrenciesInteractor

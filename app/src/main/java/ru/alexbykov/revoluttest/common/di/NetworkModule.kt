@@ -1,9 +1,9 @@
-package ru.alexbykov.revoluttest.currencies.di
+package ru.alexbykov.revoluttest.common.di
 
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
-import ru.alexbykov.revoluttest.currencies.data.RestApi
+import ru.alexbykov.revoluttest.common.data.NetworkClient
 
 import javax.inject.Singleton
 
@@ -12,8 +12,8 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRestApi(okHttpClient: OkHttpClient): RestApi {
-        return RestApi(okHttpClient)
+    fun provideRestApi(okHttpClient: OkHttpClient): NetworkClient {
+        return NetworkClient(okHttpClient)
     }
 
     @Provides
