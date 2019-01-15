@@ -1,7 +1,5 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 
 android {
@@ -12,22 +10,60 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
+ext {
+    version_rx_java = '2.2.0'
+    version_rx_android = '2.1.0'
+    version_retrofit = '2.1.3'
+    version_moxy = '1.5.5'
+    version_retrofit = '2.5.0'
+    version_constraint_layout = "1.1.3"
+    version_ktx="1.0.1"
+    version_material="1.1.0-alpha02"
+    version_app_compat="1.1.0-alpha02"
+
+    //tests
+    version_junit = "4.12"
+    version_test_runner = "1.0.2"
+    version_espresso = "3.0.2"
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:28.0.0-alpha1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.constraintlayout:constraintlayout:$version_constraint_layout"
+
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
+    implementation "com.google.android.material:material:$version_material"
+
+    //moxy
+    kapt "com.arello-mobile:moxy-compiler:$version_moxy"
+    implementation "com.arello-mobile:moxy-app-compat:$version_moxy"
+
+    //network
+    implementation "com.squareup.retrofit2:retrofit:$version_retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$version_retrofit"
+
+    implementation "io.reactivex.rxjava2:rxjava:$version_rx_java"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$version_rx_java"
+    implementation "io.reactivex.rxjava2:rxandroid:$version_rx_android"
+    implementation "androidx.core:core-ktx:$version_ktx"
+
+
+    //tests
+    testImplementation "junit:junit:$version_junit"
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
+
 }
