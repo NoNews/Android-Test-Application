@@ -11,6 +11,6 @@ class CurrenciesPresenter
 @Inject internal constructor(val currenciesInteractor: CurrenciesInteractor) : MvpPresenter<CurrenciesView>() {
 
     override fun onFirstViewAttach() {
+        viewState.showState(CurrenciesState.PROGRESS)
     }
-
 }
