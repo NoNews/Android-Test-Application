@@ -1,6 +1,5 @@
 package ru.alexbykov.revoluttest.currencies.presentation.mvp
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -11,7 +10,7 @@ import javax.inject.Inject
 
 @InjectViewState
 class CurrenciesPresenter
-@Inject internal constructor(val currenciesInteractor: CurrenciesInteractor) : MvpPresenter<CurrenciesView>() {
+@Inject internal constructor(private val currenciesInteractor: CurrenciesInteractor) : MvpPresenter<CurrenciesView>() {
 
     override fun onFirstViewAttach() {
         viewState.showState(CurrenciesState.PROGRESS)
@@ -29,11 +28,12 @@ class CurrenciesPresenter
     }
 
     private fun handleCurrenciesError(it: Throwable?) {
-
+        viewState.showState(CurrenciesState.WAITING_FOR_CONNECTION)
     }
 
     private fun onCurrenciesChanged(it: CurrencyInfo?) {
-        Log.d("CURRENCY", it.toString())
+        viewState.showState(CurrenciesState.DATA)
+        viewState.updateCurrencies(it?.currencies!!)
     }
 
 

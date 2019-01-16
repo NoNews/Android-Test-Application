@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    <TextView
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            tools:text="EUR"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:id="@+id/tv_currency_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <EditText
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_gravity="end|center_vertical"
+            android:textColor="@android:color/black"
+            android:enabled="false"
+            tools:text="100"
+            android:id="@+id/tv_currency_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+</FrameLayout>

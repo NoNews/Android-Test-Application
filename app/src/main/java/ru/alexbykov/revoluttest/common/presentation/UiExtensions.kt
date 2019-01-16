@@ -4,7 +4,7 @@ import android.view.View
 
 
 fun View.hide() {
-    visibility = View.VISIBLE
+    visibility = View.GONE
 }
 
 fun View.show() {
