@@ -3,12 +3,18 @@ package ru.alexbykov.revoluttest.common.di
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
-import ru.alexbykov.revoluttest.common.data.NetworkClient
-
+import okhttp3.logging.HttpLoggingInterceptor
+import ru.alexbykov.revoluttest.common.data.network.NetworkClient
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+
 
 @Module
 class NetworkModule {
+
+    companion object {
+        private const val TIMEOUT_IN_SECONDS = 2L
+    }
 
     @Provides
     @Singleton
@@ -19,7 +25,13 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
+
+        val httpLoggingInterceptor = HttpLoggingInterceptor()
+        httpLoggingInterceptor.level=HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
+            .callTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
             .build()
     }
 }

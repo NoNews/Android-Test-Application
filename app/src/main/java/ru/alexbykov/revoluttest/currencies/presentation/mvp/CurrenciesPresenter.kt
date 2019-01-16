@@ -2,6 +2,8 @@ package ru.alexbykov.revoluttest.currencies.presentation.mvp
 
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
+import ru.alexbykov.revoluttest.currencies.data.CurrenciesResponse
 import ru.alexbykov.revoluttest.currencies.presentation.CurrenciesInteractor
 import javax.inject.Inject
 
@@ -12,5 +14,25 @@ class CurrenciesPresenter
 
     override fun onFirstViewAttach() {
         viewState.showState(CurrenciesState.PROGRESS)
+
+
+        var disposable = currenciesInteractor.observeCurrencies()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                onCurrenciesChanged(it)
+            }, {
+                handleCurrenciesError(it)
+            })
+
+
+    }
+
+    private fun handleCurrenciesError(it: Throwable?) {
+
+    }
+
+    private fun onCurrenciesChanged(it: CurrenciesResponse?) {
+
+
     }
 }
