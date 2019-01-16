@@ -1,9 +1,10 @@
 package ru.alexbykov.revoluttest.currencies.presentation.mvp
 
+import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
-import ru.alexbykov.revoluttest.currencies.data.CurrenciesResponse
+import ru.alexbykov.revoluttest.currencies.data.CurrencyInfo
 import ru.alexbykov.revoluttest.currencies.presentation.CurrenciesInteractor
 import javax.inject.Inject
 
@@ -31,8 +32,10 @@ class CurrenciesPresenter
 
     }
 
-    private fun onCurrenciesChanged(it: CurrenciesResponse?) {
-
-
+    private fun onCurrenciesChanged(it: CurrencyInfo?) {
+        Log.d("CURRENCY", it.toString())
     }
+
+
 }
+
