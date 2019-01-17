@@ -1,6 +1,6 @@
 package ru.alexbykov.revoluttest.currencies.domain
 
-import ru.alexbykov.revoluttest.currencies.data.Currency
+import ru.alexbykov.revoluttest.currencies.data.common.entity.Currency
 
 data class CurrencyBusinessResponse(
     val updateDate: String,

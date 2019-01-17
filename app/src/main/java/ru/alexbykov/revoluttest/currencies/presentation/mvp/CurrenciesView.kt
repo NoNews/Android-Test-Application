@@ -3,7 +3,7 @@ package ru.alexbykov.revoluttest.currencies.presentation.mvp
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import ru.alexbykov.revoluttest.currencies.data.Currency
+import ru.alexbykov.revoluttest.currencies.data.common.entity.Currency
 
 @StateStrategyType(AddToEndStrategy::class)
 interface CurrenciesView : MvpView {

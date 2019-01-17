@@ -1,9 +1,9 @@
-package ru.alexbykov.revoluttest.common.data.network
+package ru.alexbykov.revoluttest.currencies.data.network
 
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.alexbykov.revoluttest.currencies.data.CurrenciesResponse
+import ru.alexbykov.revoluttest.currencies.data.network.entity.CurrenciesResponse
 
 interface CurrencyEndpoint {
 

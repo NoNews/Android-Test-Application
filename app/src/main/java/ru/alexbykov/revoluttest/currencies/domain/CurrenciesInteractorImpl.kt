@@ -1,8 +1,7 @@
 package ru.alexbykov.revoluttest.currencies.domain
 
 import io.reactivex.Observable
-import ru.alexbykov.revoluttest.currencies.data.Currency
-import ru.alexbykov.revoluttest.currencies.data.CurrencyInfo
+import ru.alexbykov.revoluttest.currencies.data.common.entity.Currency
 import ru.alexbykov.revoluttest.currencies.presentation.CurrenciesInteractor
 import javax.inject.Inject
 
@@ -22,7 +21,7 @@ class CurrenciesInteractorImpl
     }
 
     override fun changeBaseCurrency(currency: Currency) {
-        currenciesRepository.changeCurrency(currency.name!!)
+        currenciesRepository.changeCurrency(currency.name)
     }
 
 }

@@ -7,7 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.alexbykov.revoluttest.R
-import ru.alexbykov.revoluttest.currencies.data.Currency
+import ru.alexbykov.revoluttest.currencies.data.common.entity.Currency
 
 
 class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -40,7 +40,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     }
 
     private fun setupUi(currency: Currency) {
-        updateName(currency.name!!)
+        updateName(currency.name)
         updateValue(currency.value)
     }
 

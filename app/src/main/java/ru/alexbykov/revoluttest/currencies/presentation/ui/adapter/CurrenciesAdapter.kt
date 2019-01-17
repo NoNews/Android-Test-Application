@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import ru.alexbykov.revoluttest.currencies.data.Currency
+import ru.alexbykov.revoluttest.currencies.data.common.entity.Currency
 
 class CurrenciesAdapter(val inflater: LayoutInflater, diffCallback: DiffUtil.ItemCallback<Currency>) :
     ListAdapter<Currency, CurrenciesViewHolder>(diffCallback) {

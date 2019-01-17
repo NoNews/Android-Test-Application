@@ -3,6 +3,9 @@ package ru.alexbykov.revoluttest.currencies.data
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import ru.alexbykov.revoluttest.common.data.network.NetworkClient
+import ru.alexbykov.revoluttest.currencies.data.network.entity.CurrenciesResponse
+import ru.alexbykov.revoluttest.currencies.data.common.entity.Currency
+import ru.alexbykov.revoluttest.currencies.data.common.entity.CurrencyInfo
 import ru.alexbykov.revoluttest.currencies.domain.CurrenciesRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

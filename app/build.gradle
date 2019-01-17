@@ -32,6 +32,7 @@ ext {
     version_material="1.1.0-alpha02"
     version_app_compat="1.1.0-alpha02"
     version_ok_http_logging_interceptor="3.6.0"
+    room_version="2.2.0"
 
     //tests
     version_junit = "4.12"
@@ -57,10 +58,15 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$version_retrofit"
     implementation "com.squareup.okhttp3:logging-interceptor:$version_ok_http_logging_interceptor"
 
+    // optional - RxJava support for Room
+
+    implementation "androidx.room:room-runtime:2.0.0"
+    kapt "androidx.room:room-compiler:2.0.0"
+
 
     implementation "io.reactivex.rxjava2:rxjava:$version_rx_java"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$version_rx_java"
-    implementation "io.reactivex.rxjava2:rxandroid:$version_rx_android"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.5.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
     implementation "androidx.core:core-ktx:$version_ktx"
 
 

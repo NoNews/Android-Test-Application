@@ -1,4 +1,4 @@
-package ru.alexbykov.revoluttest.currencies.data
+package ru.alexbykov.revoluttest.currencies.data.network.entity
 
 import com.google.gson.annotations.SerializedName
 

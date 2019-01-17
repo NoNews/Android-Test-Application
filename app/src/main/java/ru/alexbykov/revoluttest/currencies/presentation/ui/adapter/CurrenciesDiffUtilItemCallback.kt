@@ -2,7 +2,7 @@ package ru.alexbykov.revoluttest.currencies.presentation.ui.adapter
 
 import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
-import ru.alexbykov.revoluttest.currencies.data.Currency
+import ru.alexbykov.revoluttest.currencies.data.common.entity.Currency
 
 
 class CurrenciesDiffUtilItemCallback : DiffUtil.ItemCallback<Currency>() {

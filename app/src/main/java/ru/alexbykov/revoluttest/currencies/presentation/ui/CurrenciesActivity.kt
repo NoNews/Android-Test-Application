@@ -12,7 +12,7 @@ import ru.alexbykov.revoluttest.common.di.Injector
 import ru.alexbykov.revoluttest.common.presentation.MvpAppCompatActivity
 import ru.alexbykov.revoluttest.common.presentation.hide
 import ru.alexbykov.revoluttest.common.presentation.show
-import ru.alexbykov.revoluttest.currencies.data.Currency
+import ru.alexbykov.revoluttest.currencies.data.common.entity.Currency
 import ru.alexbykov.revoluttest.currencies.presentation.mvp.CurrenciesPresenter
 import ru.alexbykov.revoluttest.currencies.presentation.mvp.CurrenciesState
 import ru.alexbykov.revoluttest.currencies.presentation.mvp.CurrenciesView
@@ -56,6 +56,8 @@ class CurrenciesActivity : MvpAppCompatActivity(), CurrenciesView {
     }
 
     private fun setupUx() {
+
+        currenciesAdapter.onClickInput { currenciesPresenter.onClickInput(it) }
     }
 
 
