@@ -3,6 +3,7 @@ package ru.alexbykov.revoluttest.currencies.presentation.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -47,6 +48,11 @@ class CurrenciesActivity : MvpAppCompatActivity(), CurrenciesView {
         currenciesAdapter = CurrenciesAdapter(inflater, currenciesDiffUtilItemCallback)
         rv_currencies.layoutManager = LinearLayoutManager(this)
         rv_currencies.adapter = currenciesAdapter
+
+        val itemAnimator = rv_currencies.itemAnimator
+        if (itemAnimator is SimpleItemAnimator) {
+            itemAnimator.supportsChangeAnimations = false
+        }
     }
 
     private fun setupUx() {

@@ -23,7 +23,17 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
 
     fun setupItem(currency: Currency) {
-        tvCurrencyName.text = currency.name
-        etCurrencyValue.setText(currency.value.toString())
+
+        updateName(currency.name!!)
+        updateValue(currency.value)
+
+    }
+
+    fun updateName(name: String) {
+        tvCurrencyName.text = name
+    }
+
+    fun updateValue(value: Double) {
+        etCurrencyValue.setText(value.toString())
     }
 }
