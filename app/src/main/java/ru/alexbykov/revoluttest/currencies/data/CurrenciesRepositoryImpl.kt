@@ -12,21 +12,25 @@ class CurrenciesRepositoryImpl
 @Inject
 internal constructor(val networkClient: NetworkClient) : CurrenciesRepository {
 
-    private val currentCurrency = "EUR"
-    private val currencyCount = 10
+
+    private var currentCurrency = "EUR"
+    private var currencyCount = 1.0
 
 
     override fun observeCurrencies(): Observable<CurrencyInfo> {
-        return Observable.concat(getCurrenciesFromDatabase(), getCurrenciesFromNetwork())
+        val pollingObservable = Observable.concat(getCurrenciesFromDatabase(), getCurrenciesFromNetwork())
+
+        return pollingObservable
     }
 
-
     private fun getCurrenciesFromNetwork(): Observable<CurrencyInfo>? {
-
         return Observable.interval(1, TimeUnit.SECONDS)
             .startWith(0L)
-            .flatMapSingle { networkClient.currencyEndpoint.getLatest(currentCurrency).subscribeOn(Schedulers.io()) }
-            .map { it -> convertResponse(it) }
+            .flatMapSingle {
+                networkClient.currencyEndpoint.getLatest(currentCurrency).subscribeOn(Schedulers.io())
+            }
+            .map { it -> convertResponseAndCache(it) }
+
     }
 
     private fun getCurrenciesFromDatabase(): Observable<CurrencyInfo>? {
@@ -37,15 +41,14 @@ internal constructor(val networkClient: NetworkClient) : CurrenciesRepository {
     }
 
 
-    private fun convertResponse(response: CurrenciesResponse): CurrencyInfo {
+    private fun convertResponseAndCache(response: CurrenciesResponse): CurrencyInfo {
 
-        val selectedCurrency = Currency(response.base, 1.0)
+        val selectedCurrency = Currency(response.base, currencyCount)
         val date = response.date
 
         val currencies = response.rates
-            .map { Currency(it.key, it.value) }
+            .map { Currency(it.key, it.value * currencyCount) }
             .toList()
-
 
         return CurrencyInfo(
             lastUpdateDate = date,
@@ -56,11 +59,10 @@ internal constructor(val networkClient: NetworkClient) : CurrenciesRepository {
 
 
     override fun changeCurrency(currency: String) {
-
+        currentCurrency = currency
     }
 
     override fun changeCurrencyCount(count: Double) {
-
+        currencyCount = count
     }
-
 }

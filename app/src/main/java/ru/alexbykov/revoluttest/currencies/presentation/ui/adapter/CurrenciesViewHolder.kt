@@ -22,11 +22,26 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     constructor(parent: ViewGroup) : this(LayoutInflater.from(parent.context).inflate(LAYOUT, parent, false))
 
 
-    fun setupItem(currency: Currency) {
+    fun setupItem(currency: Currency, inputClickListener: ((Currency) -> Unit)?) {
+        setupUi(currency)
+        setupUx(currency, inputClickListener)
+    }
 
+    private fun setupUx(currency: Currency, inputClickListener: ((Currency) -> Unit)?) {
+        if (inputClickListener != null) {
+
+            etCurrencyValue.setOnFocusChangeListener { v, hasFocus ->
+                if (!hasFocus) {
+                    return@setOnFocusChangeListener
+                }
+                inputClickListener.invoke(currency)
+            }
+        }
+    }
+
+    private fun setupUi(currency: Currency) {
         updateName(currency.name!!)
         updateValue(currency.value)
-
     }
 
     fun updateName(name: String) {

@@ -1,11 +1,12 @@
 package ru.alexbykov.revoluttest.currencies.presentation
 
 import io.reactivex.Observable
-import ru.alexbykov.revoluttest.currencies.data.CurrenciesResponse
-import ru.alexbykov.revoluttest.currencies.data.CurrencyInfo
+import ru.alexbykov.revoluttest.currencies.data.Currency
+import ru.alexbykov.revoluttest.currencies.domain.CurrencyBusinessResponse
 
 
 interface CurrenciesInteractor {
 
-    fun observeCurrencies(): Observable<CurrencyInfo>
+    fun observeCurrencies(): Observable<CurrencyBusinessResponse>
+    fun changeBaseCurrency(currency: Currency)
 }

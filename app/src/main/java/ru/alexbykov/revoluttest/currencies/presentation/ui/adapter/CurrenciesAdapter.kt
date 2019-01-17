@@ -17,6 +17,7 @@ class CurrenciesAdapter(val inflater: LayoutInflater, diffCallback: DiffUtil.Ite
         const val WRONG_CURRENCY_VALUE = 0.0
     }
 
+    private var inputClickListener: ((Currency) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrenciesViewHolder {
         return CurrenciesViewHolder(parent)
@@ -24,7 +25,7 @@ class CurrenciesAdapter(val inflater: LayoutInflater, diffCallback: DiffUtil.Ite
 
     override fun onBindViewHolder(holder: CurrenciesViewHolder, position: Int) {
         val currency = getItem(position)
-        holder.setupItem(currency)
+        holder.setupItem(currency, inputClickListener)
     }
 
     override fun onBindViewHolder(holder: CurrenciesViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -46,7 +47,10 @@ class CurrenciesAdapter(val inflater: LayoutInflater, diffCallback: DiffUtil.Ite
         } else {
             throw AssertionError("Payload must be Bundle instance")
         }
+    }
 
 
+    fun onClickInput(inputClickListener: (Currency) -> Unit) {
+        this.inputClickListener = inputClickListener
     }
 }
