@@ -3,7 +3,7 @@ package ru.alexbykov.revoluttest.currencies.presentation.mvp
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
-import ru.alexbykov.revoluttest.currencies.data.common.entity.Currency
+import ru.alexbykov.revoluttest.currencies.data.storage.entity.Currency
 import ru.alexbykov.revoluttest.currencies.domain.CurrencyBusinessResponse
 import ru.alexbykov.revoluttest.currencies.presentation.CurrenciesInteractor
 import javax.inject.Inject

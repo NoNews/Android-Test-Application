@@ -1,15 +1,23 @@
 package ru.alexbykov.revoluttest.common.di
 
+import android.app.Application
 import ru.alexbykov.revoluttest.currencies.di.CurrenciesComponent
 
 object Injector {
 
-    val appComponent: AppComponent by lazy {
-        DaggerAppComponent.builder().build()
+    private var appComponent: AppComponent? = null
+
+    fun initAppComponent(app: Application) {
+        appComponent = DaggerAppComponent.builder()
+            .applicationContextModule(ApplicationContextModule(app))
+            .build()
     }
 
     val currenciesComponent: CurrenciesComponent by lazy {
-        appComponent.currenciesBuilder().build()
+        if (appComponent == null) {
+            throw IllegalStateException("Must initialize AppComponent")
+        }
+        appComponent!!.currenciesBuilder().build()
     }
 }
 

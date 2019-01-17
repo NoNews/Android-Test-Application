@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-@Component(modules = [NetworkModule::class])
+@Component(modules = [ApplicationContextModule::class, NetworkModule::class, DatabaseModule::class])
 interface AppComponent {
     fun currenciesBuilder(): CurrenciesComponent.Builder
 

@@ -3,9 +3,10 @@ package ru.alexbykov.revoluttest.currencies.data
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import ru.alexbykov.revoluttest.common.data.network.NetworkClient
+import ru.alexbykov.revoluttest.common.data.storage.DatabaseClient
 import ru.alexbykov.revoluttest.currencies.data.network.entity.CurrenciesResponse
-import ru.alexbykov.revoluttest.currencies.data.common.entity.Currency
-import ru.alexbykov.revoluttest.currencies.data.common.entity.CurrencyInfo
+import ru.alexbykov.revoluttest.currencies.data.storage.entity.Currency
+import ru.alexbykov.revoluttest.currencies.data.storage.entity.CurrencyMeta
 import ru.alexbykov.revoluttest.currencies.domain.CurrenciesRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -13,7 +14,10 @@ import javax.inject.Inject
 
 class CurrenciesRepositoryImpl
 @Inject
-internal constructor(val networkClient: NetworkClient) : CurrenciesRepository {
+internal constructor(
+    private val networkClient: NetworkClient,
+    private val databaseClient: DatabaseClient
+) : CurrenciesRepository {
 
 
     private var currentCurrency = "EUR"
@@ -21,42 +25,65 @@ internal constructor(val networkClient: NetworkClient) : CurrenciesRepository {
 
 
     override fun observeCurrencies(): Observable<CurrencyInfo> {
-        val pollingObservable = Observable.concat(getCurrenciesFromDatabase(), getCurrenciesFromNetwork())
-
-        return pollingObservable
+        return Observable.concat(getCurrenciesFromDatabase().subscribeOn(Schedulers.io()), getCurrenciesFromNetwork())
     }
 
-    private fun getCurrenciesFromNetwork(): Observable<CurrencyInfo>? {
+    private fun getCurrenciesFromNetwork(): Observable<CurrencyInfo?> {
         return Observable.interval(1, TimeUnit.SECONDS)
             .startWith(0L)
-            .flatMapSingle {
-                networkClient.currencyEndpoint.getLatest(currentCurrency).subscribeOn(Schedulers.io())
-            }
-            .map { it -> convertResponseAndCache(it) }
+            .flatMapSingle { networkClient.currencyEndpoint.getLatest(currentCurrency).subscribeOn(Schedulers.io()) }
+            .map { it -> convertResponseAndSave(it) }
 
     }
 
-    private fun getCurrenciesFromDatabase(): Observable<CurrencyInfo>? {
+    private fun getCurrenciesFromDatabase(): Observable<CurrencyInfo?> {
 
         return Observable.create {
+
+            val currenciesStorage = databaseClient.currencies()
+            val currencies = currenciesStorage.getCurrencies()
+            if (currencies.isEmpty()) {
+                it.onComplete()
+                return@create
+            }
+
+            val metaData = currenciesStorage.getMeta()
+            if (metaData == null) {
+                it.onComplete()
+                return@create
+            }
+
+            val currencyInfo = CurrencyInfo(
+                meta = metaData,
+                currencies = currencies
+            )
+            it.onNext(currencyInfo)
             it.onComplete()
         }
     }
 
 
-    private fun convertResponseAndCache(response: CurrenciesResponse): CurrencyInfo {
+    private fun convertResponseAndSave(response: CurrenciesResponse): CurrencyInfo {
+        val currenciesStorage = databaseClient.currencies()
 
-        val selectedCurrency = Currency(response.base, currencyCount)
-        val date = response.date
+        val metaData = currenciesStorage.updateAndGetMeta(
+            CurrencyMeta(
+                response.base,
+                response.date,
+                currencyCount
+            )
+        )
 
         val currencies = response.rates
             .map { Currency(it.key, it.value * currencyCount) }
-            .toList()
+            .toMutableList()
+
+        val currenciesFromDatabase = currenciesStorage
+            .updateAndGetCurrencies(currencies)
 
         return CurrencyInfo(
-            lastUpdateDate = date,
-            defaultCurrency = selectedCurrency,
-            currencies = currencies
+            meta = metaData,
+            currencies = currenciesFromDatabase
         )
     }
 
