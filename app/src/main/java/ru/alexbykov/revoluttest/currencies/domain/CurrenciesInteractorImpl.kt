@@ -10,6 +10,7 @@ import javax.inject.Inject
 class CurrenciesInteractorImpl
 @Inject internal constructor(private val currenciesRepository: CurrenciesRepository) : CurrenciesInteractor {
 
+
     override fun observeCurrencies(): Observable<CurrencyBusinessResponse> {
         return currenciesRepository.observeCurrencies()
             .map { mapToBusinessResponse(it) }
@@ -21,10 +22,18 @@ class CurrenciesInteractorImpl
             .map { mapToBusinessResponse(it) }
     }
 
+    override fun changeBaseCurrencyValue(baseCurrencyValue: String): Single<CurrencyBusinessResponse> {
+        var inputValue = 0.0F
+        if (baseCurrencyValue.isNotEmpty()) {
+            inputValue = baseCurrencyValue.toFloat()
+        }
+        return currenciesRepository.changeBaseCurrencyValue(inputValue)
+            .map { mapToBusinessResponse(it) }
+    }
 
     private fun mapToBusinessResponse(it: CurrencyInfo): CurrencyBusinessResponse {
         val copy = it.currencies.toMutableList()
-        copy.add(0, Currency(it.meta.defaultCurrencyName, it.meta.lastUserInput))
+        copy.add(0, Currency(it.meta.baseCurrency, it.meta.lastUserInput))
         return CurrencyBusinessResponse(it.meta, copy.toList())
     }
 

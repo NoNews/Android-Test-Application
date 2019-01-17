@@ -9,7 +9,8 @@ interface CurrenciesRepository {
 
     fun changeCurrency(currency: String): Single<CurrencyInfo>
 
-    fun changeCurrencyCount(count: Double)
-
     fun observeCurrencies(): Observable<CurrencyInfo>
+
+    fun changeBaseCurrencyValue(it: Float): Single<CurrencyInfo>
+
 }

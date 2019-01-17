@@ -54,5 +54,17 @@ class CurrenciesPresenter
             })
 
     }
+
+    fun onInputTextChanged(it: String) {
+        val subscribe = currenciesInteractor.changeBaseCurrencyValue(it)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                onCurrenciesChanged(it)
+            }, {
+                handleCurrenciesError(it)
+            })
+
+    }
 }
 

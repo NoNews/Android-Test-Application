@@ -14,10 +14,11 @@ class CurrenciesAdapter(val inflater: LayoutInflater, diffCallback: DiffUtil.Ite
     companion object {
         const val EXTRAS_CURRENCY_VALUE = "extras_value_key"
         const val EXTRAS_CURRENCY_NAME = "extras_name_key"
-        const val WRONG_CURRENCY_VALUE = 0.0
+        const val WRONG_CURRENCY_VALUE = 0.0F
     }
 
     private var inputClickListener: ((Currency) -> Unit)? = null
+    private var inputChangeListener: ((String) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrenciesViewHolder {
         return CurrenciesViewHolder(parent)
@@ -25,7 +26,7 @@ class CurrenciesAdapter(val inflater: LayoutInflater, diffCallback: DiffUtil.Ite
 
     override fun onBindViewHolder(holder: CurrenciesViewHolder, position: Int) {
         val currency = getItem(position)
-        holder.setupItem(currency, inputClickListener)
+        holder.setupItem(currency, inputClickListener,inputChangeListener)
     }
 
     override fun onBindViewHolder(holder: CurrenciesViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -37,7 +38,7 @@ class CurrenciesAdapter(val inflater: LayoutInflater, diffCallback: DiffUtil.Ite
 
         if (bundle is Bundle) {
             val name = bundle.getString(EXTRAS_CURRENCY_NAME, "")
-            val value = bundle.getDouble(EXTRAS_CURRENCY_VALUE, WRONG_CURRENCY_VALUE)
+            val value = bundle.getFloat(EXTRAS_CURRENCY_VALUE, WRONG_CURRENCY_VALUE)
             if (!name.isEmpty()) {
                 holder.updateName(name)
             }
@@ -52,5 +53,9 @@ class CurrenciesAdapter(val inflater: LayoutInflater, diffCallback: DiffUtil.Ite
 
     fun onClickInput(inputClickListener: (Currency) -> Unit) {
         this.inputClickListener = inputClickListener
+    }
+
+    fun onInputChanged(inputChangeListener: (String) -> Unit) {
+        this.inputChangeListener = inputChangeListener
     }
 }

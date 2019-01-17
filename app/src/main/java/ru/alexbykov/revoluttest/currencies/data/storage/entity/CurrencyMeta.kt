@@ -10,12 +10,12 @@ data class CurrencyMeta(
 
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "default_currency_name")
-    var defaultCurrencyName: String,
+    var baseCurrency: String,
 
     @ColumnInfo(name = "update_time")
     var updateTime: String,
 
     @ColumnInfo(name = "last_user_input")
-    var lastUserInput: Double
+    var lastUserInput: Float
 
 )

@@ -21,8 +21,10 @@ internal constructor(
 ) : CurrenciesRepository {
 
 
+    @Volatile
     private var currentCurrency = "EUR"
-    private var currencyCount = 1.0
+    @Volatile
+    private var currencyCount = 1.0F
 
     private val currencyStorage = databaseClient.currencies()
 
@@ -50,7 +52,7 @@ internal constructor(
                 return@create
             }
 
-            val currencies = currenciesStorage.getCurrencies(metaData.defaultCurrencyName)
+            val currencies = currenciesStorage.getCurrencies(metaData.baseCurrency)
             if (currencies.isEmpty()) {
                 it.onComplete()
                 return@create
@@ -81,7 +83,7 @@ internal constructor(
         )
 
         val currencies = rates
-            .map { Currency(it.key, it.value * currencyCount) }
+            .map { Currency(it.key, calculateNewValue(it.value)) }
             .toList()
 
         val currenciesFromDatabase = currenciesStorage
@@ -98,14 +100,35 @@ internal constructor(
         return Single.create {
             currentCurrency = currency
             val meta = currencyStorage.getMeta()
-            meta!!.defaultCurrencyName = currency
+            meta!!.baseCurrency = currency
             val updatedMeta = currencyStorage.updateAndGetMeta(meta)
             val currencies = currencyStorage.getCurrencies(currency)
             it.onSuccess(CurrencyInfo(updatedMeta, currencies))
         }
     }
 
-    override fun changeCurrencyCount(count: Double) {
-        currencyCount = count
+    override fun changeBaseCurrencyValue(inputValue: Float): Single<CurrencyInfo> {
+        return Single.create { it ->
+            currencyCount = inputValue
+            val meta = currencyStorage.getMeta()
+            meta!!.lastUserInput = currencyCount
+            val updatedMeta = currencyStorage.updateAndGetMeta(meta)
+
+            val currencies = currencyStorage.getCurrencies(meta.baseCurrency)
+                .asSequence()
+                .map { currency -> Currency(currency.name, calculateNewValue(currency.value)); }
+                .toList()
+
+            it.onSuccess(CurrencyInfo(updatedMeta, currencies))
+        }
     }
+
+    private fun calculateNewValue(value: Float): Float {
+        return if (currencyCount == 0.0F) {
+            currencyCount
+        } else {
+            value * currencyCount
+        }
+    }
+
 }

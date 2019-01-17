@@ -58,6 +58,7 @@ class CurrenciesActivity : MvpAppCompatActivity(), CurrenciesView {
     private fun setupUx() {
 
         currenciesAdapter.onClickInput { currenciesPresenter.onClickInput(it) }
+        currenciesAdapter.onInputChanged{currenciesPresenter.onInputTextChanged(it)}
     }
 
 

@@ -11,5 +11,5 @@ data class Currency(
     @ColumnInfo(name = "name")
     val name: String,
     @ColumnInfo(name = "value")
-    val value: Double
+    val value: Float
 )
