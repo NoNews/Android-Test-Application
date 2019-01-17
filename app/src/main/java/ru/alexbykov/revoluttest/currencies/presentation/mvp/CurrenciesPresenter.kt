@@ -3,6 +3,7 @@ package ru.alexbykov.revoluttest.currencies.presentation.mvp
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import ru.alexbykov.revoluttest.currencies.data.storage.entity.Currency
 import ru.alexbykov.revoluttest.currencies.domain.CurrencyBusinessResponse
 import ru.alexbykov.revoluttest.currencies.presentation.CurrenciesInteractor
@@ -15,6 +16,8 @@ class CurrenciesPresenter
 
 
     private var response: CurrencyBusinessResponse? = null
+
+    private var currency: String? = null
 
     override fun onFirstViewAttach() {
         viewState.showState(CurrenciesState.PROGRESS)
@@ -41,7 +44,15 @@ class CurrenciesPresenter
     }
 
     fun onClickInput(currency: Currency) {
-        currenciesInteractor.changeBaseCurrency(currency)
+        val subscribe = currenciesInteractor.changeBaseCurrency(currency)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                onCurrenciesChanged(it)
+            }, {
+                handleCurrenciesError(it)
+            })
+
     }
 }
 

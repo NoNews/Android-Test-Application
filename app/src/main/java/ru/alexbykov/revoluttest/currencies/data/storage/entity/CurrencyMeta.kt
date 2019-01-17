@@ -10,12 +10,12 @@ data class CurrencyMeta(
 
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "default_currency_name")
-    val defaultCurrencyName: String,
+    var defaultCurrencyName: String,
 
     @ColumnInfo(name = "update_time")
-    val updateTime: String,
+    var updateTime: String,
 
     @ColumnInfo(name = "last_user_input")
-    val lastUserInput: Double
+    var lastUserInput: Double
 
 )

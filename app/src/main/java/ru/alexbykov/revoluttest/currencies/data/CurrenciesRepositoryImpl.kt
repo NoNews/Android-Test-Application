@@ -1,6 +1,7 @@
 package ru.alexbykov.revoluttest.currencies.data
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import ru.alexbykov.revoluttest.common.data.network.NetworkClient
 import ru.alexbykov.revoluttest.common.data.storage.DatabaseClient
@@ -22,6 +23,8 @@ internal constructor(
 
     private var currentCurrency = "EUR"
     private var currencyCount = 1.0
+
+    private val currencyStorage = databaseClient.currencies()
 
 
     override fun observeCurrencies(): Observable<CurrencyInfo> {
@@ -54,7 +57,6 @@ internal constructor(
             }
 
 
-
             val currencyInfo = CurrencyInfo(
                 meta = metaData,
                 currencies = currencies
@@ -67,6 +69,7 @@ internal constructor(
 
     private fun convertResponseAndSave(response: CurrenciesResponse): CurrencyInfo {
         val currenciesStorage = databaseClient.currencies()
+        val rates = response.rates
 
         val baseCurrency = response.base
         val metaData = currenciesStorage.updateAndGetMeta(
@@ -77,12 +80,12 @@ internal constructor(
             )
         )
 
-        val currencies = response.rates
+        val currencies = rates
             .map { Currency(it.key, it.value * currencyCount) }
             .toList()
 
         val currenciesFromDatabase = currenciesStorage
-            .updateAndGetCurrencies(currencies,baseCurrency)
+            .updateAndGetCurrencies(currencies, baseCurrency)
 
         return CurrencyInfo(
             meta = metaData,
@@ -91,8 +94,15 @@ internal constructor(
     }
 
 
-    override fun changeCurrency(currency: String) {
-        currentCurrency = currency
+    override fun changeCurrency(currency: String): Single<CurrencyInfo> {
+        return Single.create {
+            currentCurrency = currency
+            val meta = currencyStorage.getMeta()
+            meta!!.defaultCurrencyName = currency
+            val updatedMeta = currencyStorage.updateAndGetMeta(meta)
+            val currencies = currencyStorage.getCurrencies(currency)
+            it.onSuccess(CurrencyInfo(updatedMeta, currencies))
+        }
     }
 
     override fun changeCurrencyCount(count: Double) {
