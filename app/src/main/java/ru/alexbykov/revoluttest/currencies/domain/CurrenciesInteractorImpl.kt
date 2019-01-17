@@ -12,6 +12,7 @@ class CurrenciesInteractorImpl
         return currenciesRepository.observeCurrencies()
             .map {
                 val copy = it.currencies.toMutableList()
+
                 copy.add(0, Currency(it.meta.defaultCurrencyName, it.meta.lastUserInput))
                 CurrencyBusinessResponse(it.meta.updateTime, copy.toList())
             }

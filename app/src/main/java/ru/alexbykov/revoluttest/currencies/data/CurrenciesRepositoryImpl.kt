@@ -41,17 +41,19 @@ internal constructor(
         return Observable.create {
 
             val currenciesStorage = databaseClient.currencies()
-            val currencies = currenciesStorage.getCurrencies()
-            if (currencies.isEmpty()) {
-                it.onComplete()
-                return@create
-            }
-
             val metaData = currenciesStorage.getMeta()
             if (metaData == null) {
                 it.onComplete()
                 return@create
             }
+
+            val currencies = currenciesStorage.getCurrencies(metaData.defaultCurrencyName)
+            if (currencies.isEmpty()) {
+                it.onComplete()
+                return@create
+            }
+
+
 
             val currencyInfo = CurrencyInfo(
                 meta = metaData,
@@ -66,9 +68,10 @@ internal constructor(
     private fun convertResponseAndSave(response: CurrenciesResponse): CurrencyInfo {
         val currenciesStorage = databaseClient.currencies()
 
+        val baseCurrency = response.base
         val metaData = currenciesStorage.updateAndGetMeta(
             CurrencyMeta(
-                response.base,
+                baseCurrency,
                 response.date,
                 currencyCount
             )
@@ -76,10 +79,10 @@ internal constructor(
 
         val currencies = response.rates
             .map { Currency(it.key, it.value * currencyCount) }
-            .toMutableList()
+            .toList()
 
         val currenciesFromDatabase = currenciesStorage
-            .updateAndGetCurrencies(currencies)
+            .updateAndGetCurrencies(currencies,baseCurrency)
 
         return CurrencyInfo(
             meta = metaData,

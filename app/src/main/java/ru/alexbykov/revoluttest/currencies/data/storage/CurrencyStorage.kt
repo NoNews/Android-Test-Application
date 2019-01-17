@@ -8,21 +8,22 @@ import ru.alexbykov.revoluttest.currencies.data.storage.entity.CurrencyMeta
 @Dao
 interface CurrencyStorage {
 
-    @Query("SELECT * FROM table_currency")
-    fun getCurrencies(): List<Currency>
+    @Query("SELECT * FROM table_currency WHERE name NOT LIKE :baseCurrency")
+    fun getCurrencies(baseCurrency: String): List<Currency>
 
     @Query("SELECT * FROM table_currency_meta")
     fun getMeta(): CurrencyMeta?
 
     @Transaction
-    fun updateAndGetCurrencies(new: List<Currency>): List<Currency> {
-        val current = getCurrencies()
+    fun updateAndGetCurrencies(new: List<Currency>,
+                               baseCurrency: String): List<Currency> {
+        val current = getCurrencies(baseCurrency)
         if (current.isEmpty()) {
             insertCurrencies(new)
-            return getCurrencies()
+            return getCurrencies(baseCurrency)
         }
         updateCurrencies(new)
-        return getCurrencies()
+        return getCurrencies(baseCurrency)
     }
 
     @Transaction
@@ -34,6 +35,7 @@ interface CurrencyStorage {
         insertMeta(new)
         return getMeta()!!
     }
+
 
 
     @Insert
