@@ -2,25 +2,25 @@ package ru.alexbykov.revoluttest.currencies.presentation.ui.adapter
 
 import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
-import ru.alexbykov.revoluttest.currencies.data.storage.entity.Currency
+import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
 
 
-class CurrenciesDiffUtilItemCallback : DiffUtil.ItemCallback<Currency>() {
+class CurrenciesDiffUtilItemCallback : DiffUtil.ItemCallback<CurrencyDetail>() {
 
 
-    override fun areItemsTheSame(oldItem: Currency, newItem: Currency): Boolean {
+    override fun areItemsTheSame(oldItem: CurrencyDetail, newItem: CurrencyDetail): Boolean {
         return oldItem.name == newItem.name
     }
 
-    override fun areContentsTheSame(oldItem: Currency, newItem: Currency): Boolean {
+    override fun areContentsTheSame(oldItem: CurrencyDetail, newItem: CurrencyDetail): Boolean {
         return oldItem == newItem
     }
 
-    override fun getChangePayload(oldItem: Currency, newItem: Currency): Any? {
+    override fun getChangePayload(oldItem: CurrencyDetail, newItem: CurrencyDetail): Any? {
         val bundle = Bundle()
 
-        if (oldItem.value != newItem.value) {
-            bundle.putFloat(CurrenciesAdapter.EXTRAS_CURRENCY_VALUE, newItem.value)
+        if (oldItem.calculatedValue != newItem.calculatedValue) {
+            bundle.putFloat(CurrenciesAdapter.EXTRAS_CURRENCY_CALCULATED_VALUE, newItem.calculatedValue)
         }
 
         if (oldItem.name != newItem.name) {

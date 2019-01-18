@@ -20,6 +20,10 @@ internal constructor(
     private val databaseClient: DatabaseClient
 ) : CurrenciesRepository {
 
+    companion object {
+        const val LONG_POLLING_INTERVAL_IN_SECONDS = 1L
+    }
+
 
     @Volatile
     private var currentCurrency = "EUR"
@@ -34,7 +38,7 @@ internal constructor(
     }
 
     private fun getCurrenciesFromNetwork(): Observable<CurrencyInfo?> {
-        return Observable.interval(1, TimeUnit.SECONDS)
+        return Observable.interval(LONG_POLLING_INTERVAL_IN_SECONDS, TimeUnit.SECONDS)
             .startWith(0L)
             .flatMapSingle { networkClient.currencyEndpoint.getLatest(currentCurrency).subscribeOn(Schedulers.io()) }
             .map { it -> convertResponseAndSave(it) }
@@ -52,7 +56,7 @@ internal constructor(
                 return@create
             }
 
-            val currencies = currenciesStorage.getCurrencies(metaData.baseCurrency)
+            val currencies = currenciesStorage.getCurrencies()
             if (currencies.isEmpty()) {
                 it.onComplete()
                 return@create
@@ -82,12 +86,9 @@ internal constructor(
             )
         )
 
-        val currencies = rates
-            .map { Currency(it.key, calculateNewValue(it.value)) }
-            .toList()
-
+        val currencies = rates.map { Currency(it.key, it.value) }
         val currenciesFromDatabase = currenciesStorage
-            .updateAndGetCurrencies(currencies, baseCurrency)
+            .updateAndGetCurrencies(currencies)
 
         return CurrencyInfo(
             meta = metaData,
@@ -102,7 +103,7 @@ internal constructor(
             val meta = currencyStorage.getMeta()
             meta!!.baseCurrency = currency
             val updatedMeta = currencyStorage.updateAndGetMeta(meta)
-            val currencies = currencyStorage.getCurrencies(currency)
+            val currencies = currencyStorage.getCurrencies()
             it.onSuccess(CurrencyInfo(updatedMeta, currencies))
         }
     }
@@ -114,20 +115,8 @@ internal constructor(
             meta!!.lastUserInput = currencyCount
             val updatedMeta = currencyStorage.updateAndGetMeta(meta)
 
-            val currencies = currencyStorage.getCurrencies(meta.baseCurrency)
-                .asSequence()
-                .map { currency -> Currency(currency.name, calculateNewValue(currency.value)); }
-                .toList()
-
+            val currencies = currencyStorage.getCurrencies()
             it.onSuccess(CurrencyInfo(updatedMeta, currencies))
-        }
-    }
-
-    private fun calculateNewValue(value: Float): Float {
-        return if (currencyCount == 0.0F) {
-            currencyCount
-        } else {
-            value * currencyCount
         }
     }
 

@@ -11,8 +11,8 @@ import ru.alexbykov.revoluttest.currencies.data.storage.entity.CurrencyMeta
 interface CurrencyStorage {
 
     @WorkerThread
-    @Query("SELECT * FROM table_currency WHERE name NOT LIKE :baseCurrency")
-    fun getCurrencies(baseCurrency: String): List<Currency>
+    @Query("SELECT * FROM table_currency")
+    fun getCurrencies(): List<Currency>
 
     @WorkerThread
     @Query("SELECT * FROM table_currency_meta")
@@ -20,17 +20,14 @@ interface CurrencyStorage {
 
     @WorkerThread
     @Transaction
-    fun updateAndGetCurrencies(
-        new: List<Currency>,
-        baseCurrency: String
-    ): List<Currency> {
-        val current = getCurrencies(baseCurrency)
+    fun updateAndGetCurrencies(new: List<Currency>): List<Currency> {
+        val current = getCurrencies()
         if (current.isEmpty()) {
             insertCurrencies(new)
-            return getCurrencies(baseCurrency)
+            return getCurrencies()
         }
         updateCurrencies(new)
-        return getCurrencies(baseCurrency)
+        return getCurrencies()
     }
 
     @WorkerThread
