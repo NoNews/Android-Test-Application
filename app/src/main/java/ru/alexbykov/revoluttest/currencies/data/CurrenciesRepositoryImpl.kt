@@ -80,7 +80,8 @@ internal constructor(
         )
 
         val currencies = rates.map { Currency(it.key, it.value) }.toMutableList()
-        currencies.add(Currency(baseCurrency, Float.NEGATIVE_INFINITY))
+        val baseCurrencyFromDatabase = currenciesStorage.getCurrency(baseCurrency)
+        currencies.add(Currency(baseCurrency, baseCurrencyFromDatabase?.value ?: Float.NEGATIVE_INFINITY))
 
         val currenciesFromDatabase = currenciesStorage.updateAndGetCurrencies(currencies)
 

@@ -4,7 +4,6 @@ package ru.alexbykov.revoluttest.currencies.data.storage
 import androidx.annotation.WorkerThread
 import androidx.room.*
 import io.reactivex.Observable
-import org.jetbrains.annotations.Nullable
 import ru.alexbykov.revoluttest.currencies.data.storage.entity.Currency
 import ru.alexbykov.revoluttest.currencies.data.storage.entity.CurrencyMeta
 
@@ -60,5 +59,9 @@ interface CurrencyStorage {
 
     @Query("SELECT * FROM table_currency_meta")
     fun observeMeta(): Observable<CurrencyMeta>
+
+    @WorkerThread
+    @Query("SELECT * FROM table_currency WHERE name == :currencyName")
+    fun getCurrency(currencyName: String): Currency?
 
 }
