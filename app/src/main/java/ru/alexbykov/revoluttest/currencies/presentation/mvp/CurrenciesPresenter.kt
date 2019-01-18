@@ -29,6 +29,7 @@ class CurrenciesPresenter
     }
 
     private fun handleCurrenciesError(it: Throwable?) {
+        it?.printStackTrace()
         viewState.showState(CurrenciesState.WAITING_FOR_CONNECTION)
     }
 

@@ -12,6 +12,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "long", "CURRENCY_LONG_POLLING_TIME_IN_SECONDS", "1"
+        buildConfigField "float", "BASE_CURRENCY_DEFAULT_COUNT", "100"
     }
     buildTypes {
         release {
@@ -28,11 +31,11 @@ ext {
     version_moxy = '1.5.5'
     version_retrofit = '2.5.0'
     version_constraint_layout = "1.1.3"
-    version_ktx="1.0.1"
-    version_material="1.1.0-alpha02"
-    version_app_compat="1.1.0-alpha02"
-    version_ok_http_logging_interceptor="3.6.0"
-    room_version="2.2.0"
+    version_ktx = "1.0.1"
+    version_material = "1.1.0-alpha02"
+    version_app_compat = "1.1.0-alpha02"
+    version_ok_http_logging_interceptor = "3.6.0"
+    room_version = "2.2.0"
 
     //tests
     version_junit = "4.12"
@@ -70,12 +73,10 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
     implementation "androidx.core:core-ktx:$version_ktx"
 
-
     //di
     implementation 'com.google.dagger:dagger:2.20'
     kapt 'com.google.dagger:dagger-android-processor:2.20'
     kapt 'com.google.dagger:dagger-compiler:2.20'
-
 
     //tests
     testImplementation "junit:junit:$version_junit"
