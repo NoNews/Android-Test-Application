@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"/>
 
     <EditText
+            android:imeOptions="actionDone"
             android:inputType="numberDecimal"
             android:maxEms="7"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"

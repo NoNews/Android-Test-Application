@@ -24,7 +24,10 @@ class CurrenciesInteractorImpl
     }
 
 
-    override fun changeBaseCurrency(baseCurrency: CurrencyDetail, baseCurrencyCount:Float): Single<CurrencyBusinessResponse> {
+    override fun changeBaseCurrency(
+        baseCurrency: CurrencyDetail,
+        baseCurrencyCount: Float
+    ): Single<CurrencyBusinessResponse> {
         return currenciesRepository.changeCurrency(baseCurrency.name, baseCurrencyCount)
             .map { mapToBusinessResponse(it) }
     }
@@ -47,10 +50,11 @@ class CurrenciesInteractorImpl
             .map {
                 val currencyValue = it.value
                 val currencyName = it.name
+                val isBase = it.name == meta.baseCurrency
                 CurrencyDetail(
                     currencyName,
                     currencyValue,
-                    calculateCurrencyValue(meta.baseCurrencyCount, currencyValue)
+                    calculateCurrencyValue(meta.baseCurrencyCount, it.value, isBase)
                 )
             }
 
@@ -69,15 +73,14 @@ class CurrenciesInteractorImpl
         return CurrencyBusinessResponse(meta.baseCurrency, meta.updateTime, currenciesDetail)
     }
 
-    private fun calculateCurrencyValue(baseCurrencyCount: Float, currencyValue: Float): Float {
+    private fun calculateCurrencyValue(baseCurrencyCount: Float, value: Float, isBase: Boolean): Float {
         if (baseCurrencyCount == BASE_INPUT_VALUE) {
             return BASE_INPUT_VALUE
         }
-
-        if (currencyValue == Float.NEGATIVE_INFINITY) {
+        if (isBase) {
             return baseCurrencyCount
         }
-        return baseCurrencyCount * currencyValue
+        return baseCurrencyCount * value
     }
 
 

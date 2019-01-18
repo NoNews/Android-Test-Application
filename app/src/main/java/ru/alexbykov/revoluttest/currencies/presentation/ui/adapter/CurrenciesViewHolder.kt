@@ -25,13 +25,14 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     private var tvCurrencyName: TextView = itemView.findViewById(R.id.tv_currency_name)
     private var etCurrencyValue: EditText = itemView.findViewById(R.id.tv_currency_value)
 
-    constructor(inflater: LayoutInflater, parent: ViewGroup,
-                inputClickListener: ((CurrencyDetail) -> Unit)?,
-                inputChangeListener: ((String) -> Unit)?) : this(inflater.inflate(LAYOUT, parent, false)) {
+    constructor(
+        inflater: LayoutInflater, parent: ViewGroup,
+        inputClickListener: ((CurrencyDetail) -> Unit)?,
+        inputChangeListener: ((String) -> Unit)?
+    ) : this(inflater.inflate(LAYOUT, parent, false)) {
         this.inputChangeListener = inputChangeListener
         this.inputClickListener = inputClickListener
     }
-
 
 
     fun setupItem(currency: CurrencyDetail) {
@@ -51,7 +52,6 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
             if (!hasFocus) {
                 return@setOnFocusChangeListener
             }
-            etCurrencyValue.setSelection(etCurrencyValue.text.length - 1)
             inputClickListener?.invoke(currency)
         }
 

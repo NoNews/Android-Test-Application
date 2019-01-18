@@ -105,8 +105,6 @@ internal constructor(
 
     override fun changeBaseCurrencyValue(baseCurrencyCount: Float): Single<CurrencyInfo> {
         return Single.create { it ->
-
-
             val meta = currenciesStorage.getMeta()
             meta!!.baseCurrencyCount = baseCurrencyCount
             val updatedMeta = currenciesStorage.updateAndGetMeta(meta)
