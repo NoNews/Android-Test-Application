@@ -10,4 +10,7 @@ interface CurrenciesConfig {
 
     fun getBaseCurrencyCount(): Float
 
+
+    fun getDeviceCurrency(): String
+
 }

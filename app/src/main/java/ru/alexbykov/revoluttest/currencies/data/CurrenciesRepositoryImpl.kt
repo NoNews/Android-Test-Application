@@ -22,9 +22,6 @@ internal constructor(
     private val currenciesConfig: CurrenciesConfig
 ) : CurrenciesRepository {
 
-    companion object {
-        const val DEFAULT_CURRENCY = "EUR"
-    }
 
     private val currencyStorage = databaseClient.currencies()
 
@@ -37,16 +34,13 @@ internal constructor(
         return Observable.interval(currenciesConfig.getUpdateTime(), TimeUnit.SECONDS)
             .observeOn(Schedulers.io())
             .startWith(0L)
-            .map { currencyStorage.getMeta()?.baseCurrency ?: DEFAULT_CURRENCY }
+            .map { currencyStorage.getMeta()?.baseCurrency ?: currenciesConfig.getDeviceCurrency() }
             .flatMapSingle { networkClient.currencyEndpoint.getLatest(it) }
             .map { it -> convertResponseAndSave(it) }
-
-
     }
 
-
     private fun getCurrenciesFromDatabase(): Observable<CurrencyInfo?> {
-        val observable = Observable.create<CurrencyInfo> {
+        return Observable.create<CurrencyInfo> {
             val currenciesStorage = databaseClient.currencies()
             val metaData = currenciesStorage.getMeta()
             if (metaData == null) {
@@ -68,20 +62,18 @@ internal constructor(
             it.onNext(currencyInfo)
             it.onComplete()
         }.subscribeOn(Schedulers.io())
-
-        return observable
     }
 
 
     private fun convertResponseAndSave(response: CurrenciesResponse): CurrencyInfo {
-        val currenciesStorage = databaseClient.currencies()
+
         val rates = response.rates
         val baseCurrency = response.base
 
-        val currentMeta = currenciesStorage.getMeta()
+        val currentMeta = currencyStorage.getMeta()
         val baseCurrencyCount = currentMeta?.baseCurrencyCount ?: currenciesConfig.getBaseCurrencyCount()
 
-        val newMeta = currenciesStorage.updateAndGetMeta(
+        val newMeta = currencyStorage.updateAndGetMeta(
             CurrencyMeta(
                 baseCurrency,
                 response.date,
@@ -89,10 +81,10 @@ internal constructor(
             )
         )
 
-        val currencies = rates.map { Currency(it.key, it.value) }
-        val currenciesFromDatabase = currenciesStorage
-            .updateAndGetCurrencies(currencies)
+        val currencies = rates.map { Currency(it.key, it.value) }.toMutableList()
+        currencies.add(Currency(baseCurrency, 0F))
 
+        val currenciesFromDatabase = currencyStorage.updateAndGetCurrencies(currencies)
         return CurrencyInfo(
             meta = newMeta,
             currencies = currenciesFromDatabase
