@@ -17,7 +17,6 @@ class CurrenciesPresenter
     override fun onFirstViewAttach() {
         viewState.showState(CurrenciesState.PROGRESS)
 
-
         var disposable = currenciesInteractor.observeCurrencies()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -35,14 +34,10 @@ class CurrenciesPresenter
 
 
     fun onClickInput(currency: CurrencyDetail) {
-        val subscribe = currenciesInteractor.changeBaseCurrency(currency)
+        val subscribe = currenciesInteractor.changeBaseCurrency(currency, currency.calculatedValue)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                onCurrenciesChanged(it)
-            }, {
-                handleCurrenciesError(it)
-            })
+            .subscribe({ onCurrenciesChanged(it) }, { handleCurrenciesError(it) })
 
     }
 
@@ -52,9 +47,7 @@ class CurrenciesPresenter
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 onCurrenciesChanged(it)
-            }, {
-                handleCurrenciesError(it)
-            })
+            }, { handleCurrenciesError(it) })
     }
 
     private fun onCurrenciesChanged(it: CurrencyBusinessResponse) {

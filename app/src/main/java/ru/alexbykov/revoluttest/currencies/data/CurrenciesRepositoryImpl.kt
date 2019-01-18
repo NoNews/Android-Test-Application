@@ -23,8 +23,7 @@ internal constructor(
 ) : CurrenciesRepository {
 
 
-    private val currencyStorage = databaseClient.currencies()
-
+    private val currenciesStorage = databaseClient.currencies()
 
     override fun observeCurrencies(): Observable<CurrencyInfo> {
         return Observable.concat(getCurrenciesFromDatabase(), getCurrenciesFromNetwork())
@@ -34,14 +33,13 @@ internal constructor(
         return Observable.interval(currenciesConfig.getUpdateTime(), TimeUnit.SECONDS)
             .observeOn(Schedulers.io())
             .startWith(0L)
-            .map { currencyStorage.getMeta()?.baseCurrency ?: currenciesConfig.getDeviceCurrency() }
+            .map { currenciesStorage.getMeta()?.baseCurrency ?: currenciesConfig.getDeviceCurrency() }
             .flatMapSingle { networkClient.currencyEndpoint.getLatest(it) }
             .map { it -> convertResponseAndSave(it) }
     }
 
     private fun getCurrenciesFromDatabase(): Observable<CurrencyInfo?> {
         return Observable.create<CurrencyInfo> {
-            val currenciesStorage = databaseClient.currencies()
             val metaData = currenciesStorage.getMeta()
             if (metaData == null) {
                 it.onComplete()
@@ -70,10 +68,10 @@ internal constructor(
         val rates = response.rates
         val baseCurrency = response.base
 
-        val currentMeta = currencyStorage.getMeta()
+        val currentMeta = currenciesStorage.getMeta()
         val baseCurrencyCount = currentMeta?.baseCurrencyCount ?: currenciesConfig.getBaseCurrencyCount()
 
-        val newMeta = currencyStorage.updateAndGetMeta(
+        val newMeta = currenciesStorage.updateAndGetMeta(
             CurrencyMeta(
                 baseCurrency,
                 response.date,
@@ -82,9 +80,10 @@ internal constructor(
         )
 
         val currencies = rates.map { Currency(it.key, it.value) }.toMutableList()
-        currencies.add(Currency(baseCurrency, 0F))
+        currencies.add(Currency(baseCurrency, Float.NEGATIVE_INFINITY))
 
-        val currenciesFromDatabase = currencyStorage.updateAndGetCurrencies(currencies)
+        val currenciesFromDatabase = currenciesStorage.updateAndGetCurrencies(currencies)
+
         return CurrencyInfo(
             meta = newMeta,
             currencies = currenciesFromDatabase
@@ -92,22 +91,26 @@ internal constructor(
     }
 
 
-    override fun changeCurrency(currency: String): Single<CurrencyInfo> {
+    override fun changeCurrency(currency: String, baseCurrencyCount: Float): Single<CurrencyInfo> {
         return Single.create {
-            val meta = currencyStorage.getMeta()
+            val meta = currenciesStorage.getMeta()
             meta!!.baseCurrency = currency
-            val updatedMeta = currencyStorage.updateAndGetMeta(meta)
-            val currencies = currencyStorage.getCurrencies()
+            meta.baseCurrencyCount = baseCurrencyCount
+            val updatedMeta = currenciesStorage.updateAndGetMeta(meta)
+            val currencies = currenciesStorage.getCurrencies()
             it.onSuccess(CurrencyInfo(updatedMeta, currencies))
         }
     }
 
     override fun changeBaseCurrencyValue(baseCurrencyCount: Float): Single<CurrencyInfo> {
         return Single.create { it ->
-            val meta = currencyStorage.getMeta()
+
+
+            val meta = currenciesStorage.getMeta()
             meta!!.baseCurrencyCount = baseCurrencyCount
-            val updatedMeta = currencyStorage.updateAndGetMeta(meta)
-            val currencies = currencyStorage.getCurrencies()
+            val updatedMeta = currenciesStorage.updateAndGetMeta(meta)
+            val currencies = currenciesStorage.getCurrencies()
+
             it.onSuccess(CurrencyInfo(updatedMeta, currencies))
         }
     }

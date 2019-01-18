@@ -10,7 +10,7 @@ interface CurrenciesInteractor {
 
     fun observeCurrencies(): Observable<CurrencyBusinessResponse>
 
-    fun changeBaseCurrency(currency: CurrencyDetail): Single<CurrencyBusinessResponse>
+    fun changeBaseCurrency(baseCurrency: CurrencyDetail, baseCurrencyCount: Float): Single<CurrencyBusinessResponse>
 
-    fun changeBaseCurrencyValue(it: String): Single<CurrencyBusinessResponse>
+    fun changeBaseCurrencyValue(baseCurrencyCount: String): Single<CurrencyBusinessResponse>
 }

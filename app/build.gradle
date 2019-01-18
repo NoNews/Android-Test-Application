@@ -15,7 +15,7 @@ android {
 
         buildConfigField "long", "CURRENCY_LONG_POLLING_TIME_IN_SECONDS", "1"
         buildConfigField "float", "BASE_CURRENCY_DEFAULT_COUNT", "100"
-        buildConfigField "String", "BASE_CURRENCY_IF_UNABLE_TO_DETERMINE", "GBP"
+        buildConfigField "String", "BASE_CURRENCY_IF_UNABLE_TO_DETERMINE", '"GBP"'
     }
     buildTypes {
         release {

@@ -24,17 +24,19 @@ class CurrenciesInteractorImpl
     }
 
 
-    override fun changeBaseCurrency(currency: CurrencyDetail): Single<CurrencyBusinessResponse> {
-        return currenciesRepository.changeCurrency(currency.name)
+    override fun changeBaseCurrency(baseCurrency: CurrencyDetail, baseCurrencyCount:Float): Single<CurrencyBusinessResponse> {
+        return currenciesRepository.changeCurrency(baseCurrency.name, baseCurrencyCount)
             .map { mapToBusinessResponse(it) }
     }
 
-    override fun changeBaseCurrencyValue(baseCurrencyValue: String): Single<CurrencyBusinessResponse> {
-        var inputValue = BASE_INPUT_VALUE
-        if (baseCurrencyValue.isNotEmpty()) {
-            inputValue = baseCurrencyValue.toFloat()
+    override fun changeBaseCurrencyValue(baseCurrencyCount: String): Single<CurrencyBusinessResponse> {
+
+        val count = if (baseCurrencyCount.isEmpty().or(equals("0"))) {
+            BASE_INPUT_VALUE
+        } else {
+            baseCurrencyCount.toFloat()
         }
-        return currenciesRepository.changeBaseCurrencyValue(inputValue)
+        return currenciesRepository.changeBaseCurrencyValue(count)
             .map { mapToBusinessResponse(it) }
     }
 
@@ -45,7 +47,11 @@ class CurrenciesInteractorImpl
             .map {
                 val currencyValue = it.value
                 val currencyName = it.name
-                CurrencyDetail(currencyName, currencyValue, calculateCurrencyValue(meta.baseCurrencyCount, currencyValue))
+                CurrencyDetail(
+                    currencyName,
+                    currencyValue,
+                    calculateCurrencyValue(meta.baseCurrencyCount, currencyValue)
+                )
             }
 
         var baseCurrencyPosition = 0
@@ -56,16 +62,22 @@ class CurrenciesInteractorImpl
                 return@forEachIndexed
             }
         }
-        Collections.swap(currenciesDetail, baseCurrencyPosition, BASE_CURRENCY_REQUIRED_POSITION)
+        if (baseCurrencyPosition != 0) {
+            Collections.swap(currenciesDetail, baseCurrencyPosition, BASE_CURRENCY_REQUIRED_POSITION)
+        }
 
         return CurrencyBusinessResponse(meta.baseCurrency, meta.updateTime, currenciesDetail)
     }
 
-    private fun calculateCurrencyValue(userInput: Float, currencyValue: Float): Float {
-        if (userInput == BASE_INPUT_VALUE) {
+    private fun calculateCurrencyValue(baseCurrencyCount: Float, currencyValue: Float): Float {
+        if (baseCurrencyCount == BASE_INPUT_VALUE) {
             return BASE_INPUT_VALUE
         }
-        return userInput * currencyValue
+
+        if (currencyValue == Float.NEGATIVE_INFINITY) {
+            return baseCurrencyCount
+        }
+        return baseCurrencyCount * currencyValue
     }
 
 
