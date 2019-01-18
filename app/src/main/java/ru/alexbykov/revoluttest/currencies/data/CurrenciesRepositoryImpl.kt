@@ -26,9 +26,6 @@ internal constructor(
         const val DEFAULT_CURRENCY = "EUR"
     }
 
-    @Volatile
-    private var currencyCount = 1.0F
-
     private val currencyStorage = databaseClient.currencies()
 
 
@@ -40,7 +37,7 @@ internal constructor(
         return Observable.interval(currenciesConfig.getUpdateTime(), TimeUnit.SECONDS)
             .observeOn(Schedulers.io())
             .startWith(0L)
-            .map { currencyStorage.getMeta()?.baseCurrency ?: DEFAULT_CURRENCY}
+            .map { currencyStorage.getMeta()?.baseCurrency ?: DEFAULT_CURRENCY }
             .flatMapSingle { networkClient.currencyEndpoint.getLatest(it) }
             .map { it -> convertResponseAndSave(it) }
 
@@ -79,13 +76,16 @@ internal constructor(
     private fun convertResponseAndSave(response: CurrenciesResponse): CurrencyInfo {
         val currenciesStorage = databaseClient.currencies()
         val rates = response.rates
-
         val baseCurrency = response.base
-        val metaData = currenciesStorage.updateAndGetMeta(
+
+        val currentMeta = currenciesStorage.getMeta()
+        val baseCurrencyCount = currentMeta?.baseCurrencyCount ?: currenciesConfig.getBaseCurrencyCount()
+
+        val newMeta = currenciesStorage.updateAndGetMeta(
             CurrencyMeta(
                 baseCurrency,
                 response.date,
-                currencyCount
+                baseCurrencyCount
             )
         )
 
@@ -94,7 +94,7 @@ internal constructor(
             .updateAndGetCurrencies(currencies)
 
         return CurrencyInfo(
-            meta = metaData,
+            meta = newMeta,
             currencies = currenciesFromDatabase
         )
     }
@@ -110,11 +110,10 @@ internal constructor(
         }
     }
 
-    override fun changeBaseCurrencyValue(inputValue: Float): Single<CurrencyInfo> {
+    override fun changeBaseCurrencyValue(baseCurrencyCount: Float): Single<CurrencyInfo> {
         return Single.create { it ->
-            currencyCount = inputValue
             val meta = currencyStorage.getMeta()
-            meta!!.lastUserInput = currencyCount
+            meta!!.baseCurrencyCount = baseCurrencyCount
             val updatedMeta = currencyStorage.updateAndGetMeta(meta)
             val currencies = currencyStorage.getCurrencies()
             it.onSuccess(CurrencyInfo(updatedMeta, currencies))

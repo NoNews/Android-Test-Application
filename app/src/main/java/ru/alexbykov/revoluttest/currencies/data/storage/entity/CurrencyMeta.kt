@@ -16,6 +16,6 @@ data class CurrencyMeta(
     var updateTime: String,
 
     @ColumnInfo(name = "last_user_input")
-    var lastUserInput: Float
+    var baseCurrencyCount: Float
 
 )

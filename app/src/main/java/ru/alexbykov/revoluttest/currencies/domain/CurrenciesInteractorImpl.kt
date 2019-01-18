@@ -45,7 +45,7 @@ class CurrenciesInteractorImpl
             .map {
                 val currencyValue = it.value
                 val currencyName = it.name
-                CurrencyDetail(currencyName, currencyValue, calculateCurrencyValue(meta.lastUserInput, currencyValue))
+                CurrencyDetail(currencyName, currencyValue, calculateCurrencyValue(meta.baseCurrencyCount, currencyValue))
             }
 
         var baseCurrencyPosition = 0
