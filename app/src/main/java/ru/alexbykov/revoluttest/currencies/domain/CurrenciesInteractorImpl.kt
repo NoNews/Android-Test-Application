@@ -25,10 +25,9 @@ class CurrenciesInteractorImpl
 
 
     override fun changeBaseCurrency(
-        baseCurrency: CurrencyDetail,
-        baseCurrencyCount: Float
+        baseCurrency: CurrencyDetail
     ): Completable {
-        return currenciesRepository.changeCurrency(baseCurrency.name, baseCurrencyCount)
+        return currenciesRepository.changeCurrency(baseCurrency.name)
     }
 
     override fun changeBaseCurrencyValue(baseCurrencyCount: String): Single<CurrencyBusinessResponse> {

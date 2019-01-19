@@ -41,7 +41,7 @@ class CurrenciesPresenter
     fun onClickInput(currency: CurrencyDetail) {
         currenciesDisposable?.dispose()
         currenciesDisposable = null
-        val subscribe = currenciesInteractor.changeBaseCurrency(currency, currency.calculatedValue)
+        val subscribe = currenciesInteractor.changeBaseCurrency(currency)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

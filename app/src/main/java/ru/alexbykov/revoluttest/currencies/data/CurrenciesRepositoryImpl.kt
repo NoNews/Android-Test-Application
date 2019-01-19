@@ -92,11 +92,16 @@ internal constructor(
     }
 
 
-    override fun changeCurrency(currency: String, baseCurrencyCount: Float): Completable {
+    override fun changeCurrency(currencyName: String): Completable {
         return Completable.create {
             val meta = currenciesStorage.getMeta()
-            meta!!.baseCurrency = currency
-            meta.baseCurrencyCount = baseCurrencyCount
+
+            val currency = currenciesStorage.getCurrency(currencyName)
+
+            val oldCount = meta!!.baseCurrencyCount
+
+            meta.baseCurrency = currency!!.name
+            meta.baseCurrencyCount = currency.value * oldCount
             currenciesStorage.updateMeta(meta)
             it.onComplete()
         }

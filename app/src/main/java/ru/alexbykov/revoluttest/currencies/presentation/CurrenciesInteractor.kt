@@ -11,7 +11,7 @@ interface CurrenciesInteractor {
 
     fun observeCurrencies(): Observable<CurrencyBusinessResponse>
 
-    fun changeBaseCurrency(baseCurrency: CurrencyDetail, baseCurrencyCount: Float): Completable
+    fun changeBaseCurrency(baseCurrency: CurrencyDetail): Completable
 
     fun changeBaseCurrencyValue(baseCurrencyCount: String): Single<CurrencyBusinessResponse>
 }

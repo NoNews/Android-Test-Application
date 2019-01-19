@@ -7,7 +7,7 @@ import ru.alexbykov.revoluttest.currencies.data.CurrencyInfo
 
 interface CurrenciesRepository {
 
-    fun changeCurrency(currency: String, baseCurrencyCount: Float): Completable
+    fun changeCurrency(currencyName: String): Completable
 
     fun observeCurrencies(): Observable<CurrencyInfo>
 
