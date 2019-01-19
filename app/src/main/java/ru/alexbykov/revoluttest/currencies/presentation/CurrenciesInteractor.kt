@@ -1,5 +1,6 @@
 package ru.alexbykov.revoluttest.currencies.presentation
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyBusinessResponse
@@ -10,7 +11,7 @@ interface CurrenciesInteractor {
 
     fun observeCurrencies(): Observable<CurrencyBusinessResponse>
 
-    fun changeBaseCurrency(baseCurrency: CurrencyDetail, baseCurrencyCount: Float): Single<CurrencyBusinessResponse>
+    fun changeBaseCurrency(baseCurrency: CurrencyDetail, baseCurrencyCount: Float): Completable
 
     fun changeBaseCurrencyValue(baseCurrencyCount: String): Single<CurrencyBusinessResponse>
 }

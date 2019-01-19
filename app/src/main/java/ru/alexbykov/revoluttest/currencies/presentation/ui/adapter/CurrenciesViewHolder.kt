@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.alexbykov.revoluttest.R
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
@@ -35,19 +36,24 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     }
 
 
-    fun setupItem(currency: CurrencyDetail) {
-        setupUi(currency)
-        setupUx(currency)
+    fun setupItem(currency: CurrencyDetail, isBase: Boolean) {
+        setupUi(currency, isBase)
+        setupUx(currency, isBase)
     }
 
 
-    private fun setupUi(currency: CurrencyDetail) {
+    private fun setupUi(
+        currency: CurrencyDetail,
+        base: Boolean
+    ) {
         updateName(currency.name)
-        updateCalculatedValue(currency.calculatedValue)
+        updateCalculatedValue(currency.calculatedValue, base)
     }
 
-    private fun setupUx(currency: CurrencyDetail) {
-
+    private fun setupUx(
+        currency: CurrencyDetail,
+        base: Boolean
+    ) {
         etCurrencyValue.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
                 return@setOnFocusChangeListener
@@ -65,9 +71,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if (etCurrencyValue.isFocused) {
-                    inputChangeListener?.invoke(s.toString())
-                }
+                
             }
         })
 
@@ -78,11 +82,20 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
         tvCurrencyName.text = name
     }
 
-    fun updateCalculatedValue(value: Float) {
-        if (etCurrencyValue.isFocused) {
+    fun updateCalculatedValue(value: Float, isBase: Boolean) {
+        if (isBase) {
+            etCurrencyValue.isEnabled = true
+            etCurrencyValue.setTextColor(ContextCompat.getColor(etCurrencyValue.context, android.R.color.black))
             return
         }
 
+        etCurrencyValue.isEnabled = value > 0.00F
+
+        if (etCurrencyValue.isEnabled) {
+            etCurrencyValue.setTextColor(ContextCompat.getColor(etCurrencyValue.context, android.R.color.black))
+        } else {
+            etCurrencyValue.setTextColor(ContextCompat.getColor(etCurrencyValue.context, android.R.color.darker_gray))
+        }
 
         val formattedCurrency = String.format("%.2f", value)
         etCurrencyValue.setText(formattedCurrency)

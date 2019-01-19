@@ -31,6 +31,6 @@ class CurrenciesDiffUtilItemCallback : DiffUtil.ItemCallback<CurrencyDetail>() {
             return null
         }
 
-        return bundle
+        return null
     }
 }

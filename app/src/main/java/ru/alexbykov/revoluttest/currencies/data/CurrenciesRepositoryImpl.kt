@@ -1,5 +1,6 @@
 package ru.alexbykov.revoluttest.currencies.data
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -18,7 +19,7 @@ class CurrenciesRepositoryImpl
 @Inject
 internal constructor(
     private val networkClient: NetworkClient,
-    private val databaseClient: DatabaseClient,
+    databaseClient: DatabaseClient,
     private val currenciesConfig: CurrenciesConfig
 ) : CurrenciesRepository {
 
@@ -32,9 +33,9 @@ internal constructor(
     private fun getCurrenciesFromNetwork(): Observable<CurrencyInfo?> {
         return Observable.interval(currenciesConfig.getUpdateTime(), TimeUnit.SECONDS)
             .observeOn(Schedulers.io())
-            .startWith(0L)
             .map { currenciesStorage.getMeta()?.baseCurrency ?: currenciesConfig.getDeviceCurrency() }
             .flatMapSingle { networkClient.currencyEndpoint.getLatest(it) }
+            .retry()
             .map { it -> convertResponseAndSave(it) }
     }
 
@@ -64,7 +65,6 @@ internal constructor(
 
 
     private fun convertResponseAndSave(response: CurrenciesResponse): CurrencyInfo {
-
         val rates = response.rates
         val baseCurrency = response.base
 
@@ -92,14 +92,13 @@ internal constructor(
     }
 
 
-    override fun changeCurrency(currency: String, baseCurrencyCount: Float): Single<CurrencyInfo> {
-        return Single.create {
+    override fun changeCurrency(currency: String, baseCurrencyCount: Float): Completable {
+        return Completable.create {
             val meta = currenciesStorage.getMeta()
             meta!!.baseCurrency = currency
             meta.baseCurrencyCount = baseCurrencyCount
-            val updatedMeta = currenciesStorage.updateAndGetMeta(meta)
-            val currencies = currenciesStorage.getCurrencies()
-            it.onSuccess(CurrencyInfo(updatedMeta, currencies))
+            currenciesStorage.updateMeta(meta)
+            it.onComplete()
         }
     }
 
@@ -109,7 +108,6 @@ internal constructor(
             meta!!.baseCurrencyCount = baseCurrencyCount
             val updatedMeta = currenciesStorage.updateAndGetMeta(meta)
             val currencies = currenciesStorage.getCurrencies()
-
             it.onSuccess(CurrencyInfo(updatedMeta, currencies))
         }
     }

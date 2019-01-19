@@ -1,5 +1,6 @@
 package ru.alexbykov.revoluttest.currencies.domain
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import ru.alexbykov.revoluttest.currencies.data.CurrencyInfo
@@ -15,7 +16,6 @@ class CurrenciesInteractorImpl
 
     companion object {
         const val BASE_CURRENCY_REQUIRED_POSITION = 0
-        const val BASE_INPUT_VALUE = 0.0F
     }
 
     override fun observeCurrencies(): Observable<CurrencyBusinessResponse> {
@@ -27,15 +27,14 @@ class CurrenciesInteractorImpl
     override fun changeBaseCurrency(
         baseCurrency: CurrencyDetail,
         baseCurrencyCount: Float
-    ): Single<CurrencyBusinessResponse> {
+    ): Completable {
         return currenciesRepository.changeCurrency(baseCurrency.name, baseCurrencyCount)
-            .map { mapToBusinessResponse(it) }
     }
 
     override fun changeBaseCurrencyValue(baseCurrencyCount: String): Single<CurrencyBusinessResponse> {
 
         val count = if (baseCurrencyCount.isEmpty().or(equals("0"))) {
-            BASE_INPUT_VALUE
+            0.0F
         } else {
             baseCurrencyCount.toFloat()
         }
@@ -43,10 +42,10 @@ class CurrenciesInteractorImpl
             .map { mapToBusinessResponse(it) }
     }
 
-    private fun mapToBusinessResponse(it: CurrencyInfo): CurrencyBusinessResponse {
-        val meta = it.meta
+    private fun mapToBusinessResponse(currencyInfo: CurrencyInfo): CurrencyBusinessResponse {
+        val meta = currencyInfo.meta
 
-        val currenciesDetail = it.currencies
+        val currenciesDetail = currencyInfo.currencies
             .map {
                 val currencyValue = it.value
                 val currencyName = it.name
@@ -74,9 +73,6 @@ class CurrenciesInteractorImpl
     }
 
     private fun calculateCurrencyValue(baseCurrencyCount: Float, value: Float, isBase: Boolean): Float {
-        if (baseCurrencyCount == BASE_INPUT_VALUE) {
-            return BASE_INPUT_VALUE
-        }
         if (isBase) {
             return baseCurrencyCount
         }

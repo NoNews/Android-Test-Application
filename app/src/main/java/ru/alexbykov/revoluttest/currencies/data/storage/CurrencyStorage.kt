@@ -33,12 +33,18 @@ interface CurrencyStorage {
     @WorkerThread
     @Transaction
     fun updateAndGetMeta(new: CurrencyMeta): CurrencyMeta {
+        updateMeta(new)
+        return getMeta()!!
+    }
+
+    @WorkerThread
+    @Transaction
+    fun updateMeta(new: CurrencyMeta) {
         val current = getMeta()
         if (current != null) {
             deleteMeta(current)
         }
         insertMeta(new)
-        return getMeta()!!
     }
 
     @WorkerThread

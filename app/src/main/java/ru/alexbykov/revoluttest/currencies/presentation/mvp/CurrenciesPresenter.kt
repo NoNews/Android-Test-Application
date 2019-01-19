@@ -3,6 +3,7 @@ package ru.alexbykov.revoluttest.currencies.presentation.mvp
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyBusinessResponse
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
@@ -14,30 +15,38 @@ import javax.inject.Inject
 class CurrenciesPresenter
 @Inject internal constructor(private val currenciesInteractor: CurrenciesInteractor) : MvpPresenter<CurrenciesView>() {
 
+
+    private var currenciesDisposable: Disposable? = null
+
     override fun onFirstViewAttach() {
         viewState.showState(CurrenciesState.PROGRESS)
+        observeCurrencies()
+    }
 
-        var disposable = currenciesInteractor.observeCurrencies()
+    private fun observeCurrencies() {
+        currenciesDisposable = currenciesInteractor.observeCurrencies()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 onCurrenciesChanged(it)
             }, {
                 handleCurrenciesError(it)
             })
-
     }
 
     private fun handleCurrenciesError(it: Throwable?) {
         it?.printStackTrace()
-        viewState.showState(CurrenciesState.WAITING_FOR_CONNECTION)
     }
 
 
     fun onClickInput(currency: CurrencyDetail) {
+        currenciesDisposable?.dispose()
+        currenciesDisposable = null
         val subscribe = currenciesInteractor.changeBaseCurrency(currency, currency.calculatedValue)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ onCurrenciesChanged(it) }, { handleCurrenciesError(it) })
+            .subscribe({
+                observeCurrencies()
+            }, { handleCurrenciesError(it) })
 
     }
 
