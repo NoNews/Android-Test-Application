@@ -97,6 +97,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
         val bigDecimal = BigDecimal(value)
         val df = DecimalFormat("#,##0.00")
         return df.format(bigDecimal).replace(".00", "")
+
     }
 
 }

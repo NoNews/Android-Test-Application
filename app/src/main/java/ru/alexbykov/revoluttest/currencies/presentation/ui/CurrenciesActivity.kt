@@ -1,7 +1,10 @@
 package ru.alexbykov.revoluttest.currencies.presentation.ui
 
 import android.os.Bundle
+
 import android.view.LayoutInflater
+import androidx.annotation.LayoutRes
+import androidx.annotation.StringRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -22,7 +25,11 @@ import ru.alexbykov.revoluttest.currencies.presentation.ui.adapter.CurrenciesDif
 class CurrenciesActivity : MvpAppCompatActivity(), CurrenciesView {
 
     companion object {
+        @LayoutRes
         const val LAYOUT = R.layout.activity_main
+
+        @StringRes
+        const val TOOLBAR_SCREEN_NAME = R.string.screen_currencies_name
     }
 
     @InjectPresenter
@@ -43,6 +50,7 @@ class CurrenciesActivity : MvpAppCompatActivity(), CurrenciesView {
 
 
     private fun setupUi() {
+        toolbar.setTitle(TOOLBAR_SCREEN_NAME)
         val inflater = LayoutInflater.from(applicationContext)
         val currenciesDiffUtilItemCallback = CurrenciesDiffUtilItemCallback()
         currenciesAdapter = CurrenciesAdapter(inflater, currenciesDiffUtilItemCallback)
@@ -61,25 +69,17 @@ class CurrenciesActivity : MvpAppCompatActivity(), CurrenciesView {
     }
 
 
-    override fun showState(state: CurrenciesState) = when (state) {
-        CurrenciesState.PROGRESS -> {
-            progress_bar.show()
-            rv_currencies.hide()
-        }
+    override fun showState(state: CurrenciesState) {
+        when (state) {
+            CurrenciesState.PROGRESS -> {
+                lt_progress.show()
+                rv_currencies.hide()
+            }
 
-        CurrenciesState.DATA -> {
-            progress_bar.hide()
-            rv_currencies.show()
-        }
-
-        CurrenciesState.WAITING_FOR_CONNECTION -> {
-            progress_bar.hide()
-            rv_currencies.hide()
-        }
-
-        CurrenciesState.NO_DATA -> {
-            progress_bar.hide()
-            rv_currencies.hide()
+            CurrenciesState.DATA -> {
+                lt_progress.hide()
+                rv_currencies.show()
+            }
         }
     }
 

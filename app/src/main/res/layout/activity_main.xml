@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
-    <ProgressBar
-            tools:visibility="visible"
+    <com.google.android.material.appbar.AppBarLayout
+            android:elevation="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <FrameLayout
             android:visibility="gone"
-            android:layout_gravity="center"
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:id="@+id/lt_progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <ProgressBar
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+            android:splitMotionEvents="false"
             tools:visibility="visible"
             android:visibility="gone"
             android:id="@+id/rv_currencies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-</FrameLayout>
+</LinearLayout>

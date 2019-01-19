@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">RevolutTest</string>
+    <string name="currencies_network_error">Network
+        connection unavailable.\nPlease, go to settings, check it and try again
+    </string>
+    <string name="currencies_network_short">Network connection unavailable</string>
+    <string name="btn_try_again_text">Try again</string>
+    <string name="screen_currencies_name">Converter</string>
+    <string name="internet_connecting_state">Connecting...</string>
 </resources>

@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import ru.alexbykov.revoluttest.common.data.network.InternetInfoProvider
 import ru.alexbykov.revoluttest.common.data.network.NetworkClient
 import ru.alexbykov.revoluttest.common.data.storage.DatabaseClient
 import ru.alexbykov.revoluttest.currencies.data.config.CurrenciesConfig
@@ -11,6 +12,7 @@ import ru.alexbykov.revoluttest.currencies.data.network.entity.CurrenciesRespons
 import ru.alexbykov.revoluttest.currencies.data.storage.entity.Currency
 import ru.alexbykov.revoluttest.currencies.data.storage.entity.CurrencyMeta
 import ru.alexbykov.revoluttest.currencies.domain.CurrenciesRepository
+import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -20,7 +22,8 @@ class CurrenciesRepositoryImpl
 internal constructor(
     private val networkClient: NetworkClient,
     databaseClient: DatabaseClient,
-    private val currenciesConfig: CurrenciesConfig
+    private val currenciesConfig: CurrenciesConfig,
+    private val internetProvider: InternetInfoProvider
 ) : CurrenciesRepository {
 
 
@@ -95,26 +98,27 @@ internal constructor(
     override fun changeCurrency(currencyName: String): Completable {
         return Completable.create {
             val meta = currenciesStorage.getMeta()
-
             val currency = currenciesStorage.getCurrency(currencyName)
-
             val oldCount = meta!!.baseCurrencyCount
-
             meta.baseCurrency = currency!!.name
             meta.baseCurrencyCount = currency.value * oldCount
             currenciesStorage.updateMeta(meta)
             it.onComplete()
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun changeBaseCurrencyValue(baseCurrencyCount: Float): Single<CurrencyInfo> {
-        return Single.create { it ->
+        return Single.create<CurrencyInfo> {
             val meta = currenciesStorage.getMeta()
             meta!!.baseCurrencyCount = baseCurrencyCount
             val updatedMeta = currenciesStorage.updateAndGetMeta(meta)
-            val currencies = currenciesStorage.getCurrencies()
-            it.onSuccess(CurrencyInfo(updatedMeta, currencies))
-        }
+            if (internetProvider.isInternetAvailable) {
+                val currencies = currenciesStorage.getCurrencies()
+                it.onSuccess(CurrencyInfo(updatedMeta, currencies))
+            } else {
+                it.onError(SocketTimeoutException())
+            }
+        }.subscribeOn(Schedulers.io())
     }
 
 }
