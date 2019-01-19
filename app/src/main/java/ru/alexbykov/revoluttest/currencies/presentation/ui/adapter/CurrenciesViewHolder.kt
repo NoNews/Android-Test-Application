@@ -85,7 +85,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
     fun updateCalculatedValue(value: Float, isBase: Boolean) {
         etCurrencyValue.setEditTextEnabled(isBase || etCurrencyValue.isFocused || value > 0.00)
-        if (etCurrencyValue.isFocused) {
+        if (etCurrencyValue.isFocused && etCurrencyValue.text.isNotEmpty()) {
             return
         }
         val result = formatCurrency(value.toString())
@@ -101,5 +101,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     }
 
 }
+
+
 
 

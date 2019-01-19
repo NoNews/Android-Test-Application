@@ -22,3 +22,4 @@ fun EditText.setEditTextEnabled(enabled: Boolean) {
         setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray))
     }
 }
+
