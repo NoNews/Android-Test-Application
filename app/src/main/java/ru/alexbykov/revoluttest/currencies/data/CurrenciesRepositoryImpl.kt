@@ -35,6 +35,7 @@ internal constructor(
 
     private fun getCurrenciesFromNetwork(): Observable<CurrencyInfo?> {
         return Observable.interval(currenciesConfig.getUpdateTime(), TimeUnit.SECONDS)
+            .startWith(0)
             .observeOn(Schedulers.io())
             .map { currenciesStorage.getMeta()?.baseCurrency ?: currenciesConfig.getDeviceCurrency() }
             .flatMapSingle { networkClient.currencyEndpoint.getLatest(it) }
