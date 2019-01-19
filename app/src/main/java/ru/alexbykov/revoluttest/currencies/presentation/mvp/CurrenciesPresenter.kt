@@ -18,6 +18,8 @@ class CurrenciesPresenter
     private var currenciesDisposable: Disposable? = null
     private var hasData = false
 
+    private var currentBaseCurrency: String? = null
+
     override fun onFirstViewAttach() {
         viewState.showState(CurrenciesState.PROGRESS)
 
@@ -30,6 +32,10 @@ class CurrenciesPresenter
     }
 
     fun onClickInput(currency: CurrencyDetail) {
+        if (currency.name == currentBaseCurrency) {
+            return
+        }
+
         disposeCurrencies()
         currenciesDisposable = currenciesInteractor.changeBaseCurrency(currency)
             .andThen(currenciesInteractor.observeCurrencies())
@@ -46,6 +52,7 @@ class CurrenciesPresenter
     }
 
     private fun onCurrenciesChanged(it: CurrencyBusinessResponse) {
+        currentBaseCurrency = it.baseCurrency
         viewState.showState(CurrenciesState.DATA)
         viewState.updateCurrencies(it.currencies)
     }
