@@ -7,11 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.alexbykov.revoluttest.R
+import ru.alexbykov.revoluttest.common.presentation.setEditTextEnabled
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
-
 
 class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -27,7 +26,8 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     private var etCurrencyValue: EditText = itemView.findViewById(R.id.tv_currency_value)
 
     constructor(
-        inflater: LayoutInflater, parent: ViewGroup,
+        inflater: LayoutInflater,
+        parent: ViewGroup,
         inputClickListener: ((CurrencyDetail) -> Unit)?,
         inputChangeListener: ((String) -> Unit)?
     ) : this(inflater.inflate(LAYOUT, parent, false)) {
@@ -42,18 +42,12 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     }
 
 
-    private fun setupUi(
-        currency: CurrencyDetail,
-        base: Boolean
-    ) {
+    private fun setupUi(currency: CurrencyDetail, base: Boolean) {
         updateName(currency.name)
         updateCalculatedValue(currency.calculatedValue, base)
     }
 
-    private fun setupUx(
-        currency: CurrencyDetail,
-        base: Boolean
-    ) {
+    private fun setupUx(currency: CurrencyDetail, base: Boolean) {
         etCurrencyValue.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
                 return@setOnFocusChangeListener
@@ -71,7 +65,9 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
             }
 
             override fun afterTextChanged(s: Editable?) {
-                
+                if (etCurrencyValue.isFocused) {
+                    inputChangeListener?.invoke(s?.toString()!!)
+                }
             }
         })
 
@@ -83,21 +79,14 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     }
 
     fun updateCalculatedValue(value: Float, isBase: Boolean) {
-        if (isBase) {
-            etCurrencyValue.isEnabled = true
-            etCurrencyValue.setTextColor(ContextCompat.getColor(etCurrencyValue.context, android.R.color.black))
+        etCurrencyValue.setEditTextEnabled(isBase || etCurrencyValue.isFocused || value > 0.00)
+
+        if (etCurrencyValue.isFocused) {
             return
         }
-
-        etCurrencyValue.isEnabled = value > 0.00F
-
-        if (etCurrencyValue.isEnabled) {
-            etCurrencyValue.setTextColor(ContextCompat.getColor(etCurrencyValue.context, android.R.color.black))
-        } else {
-            etCurrencyValue.setTextColor(ContextCompat.getColor(etCurrencyValue.context, android.R.color.darker_gray))
-        }
-
         val formattedCurrency = String.format("%.2f", value)
         etCurrencyValue.setText(formattedCurrency)
     }
 }
+
+
