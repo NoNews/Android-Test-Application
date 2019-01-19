@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.alexbykov.revoluttest.R
 import ru.alexbykov.revoluttest.common.presentation.setEditTextEnabled
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
+import java.math.BigDecimal
+import java.text.DecimalFormat
+
 
 class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -66,7 +69,9 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
             override fun afterTextChanged(s: Editable?) {
                 if (etCurrencyValue.isFocused) {
-                    inputChangeListener?.invoke(s?.toString()!!)
+                    val currencyValue = s.toString()
+                    val replace = currencyValue.replace(",", "")
+                    inputChangeListener?.invoke(replace)
                 }
             }
         })
@@ -80,13 +85,20 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
     fun updateCalculatedValue(value: Float, isBase: Boolean) {
         etCurrencyValue.setEditTextEnabled(isBase || etCurrencyValue.isFocused || value > 0.00)
-
         if (etCurrencyValue.isFocused) {
             return
         }
-        val formattedCurrency = String.format("%.2f", value)
-        etCurrencyValue.setText(formattedCurrency)
+        val result = formatCurrency(value.toString())
+        etCurrencyValue.setText(result)
     }
+
+
+    private fun formatCurrency(value: String): String {
+        val bigDecimal = BigDecimal(value)
+        val df = DecimalFormat("#,##0.00")
+        return df.format(bigDecimal).replace(".00", "")
+    }
+
 }
 
 
