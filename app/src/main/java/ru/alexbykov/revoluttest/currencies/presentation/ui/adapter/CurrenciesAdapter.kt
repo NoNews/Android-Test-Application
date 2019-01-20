@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
 
 class CurrenciesAdapter(
@@ -52,6 +53,17 @@ class CurrenciesAdapter(
         } else {
             throw AssertionError("Payload must be Bundle instance")
         }
+    }
+
+
+    override fun onViewAttachedToWindow(holder: CurrenciesViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        holder.onAttach()
+    }
+
+    override fun onViewDetachedFromWindow(holder: CurrenciesViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.onDetach()
     }
 
     private fun isBase(position: Int): Boolean {

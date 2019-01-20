@@ -1,14 +1,14 @@
 package ru.alexbykov.revoluttest.currencies.presentation.ui.adapter
 
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.disposables.Disposable
 import ru.alexbykov.revoluttest.R
+import ru.alexbykov.revoluttest.common.presentation.RxSimpleTextWather
 import ru.alexbykov.revoluttest.common.presentation.setEditTextEnabled
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
 import java.math.BigDecimal
@@ -27,6 +27,10 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
     private var tvCurrencyName: TextView = itemView.findViewById(R.id.tv_currency_name)
     private var etCurrencyValue: EditText = itemView.findViewById(R.id.tv_currency_value)
+
+
+    private var textWatcherDisposable: Disposable? = null
+    private val textWatcher = object : RxSimpleTextWather() {}
 
     constructor(
         inflater: LayoutInflater,
@@ -57,25 +61,6 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
             }
             inputClickListener?.invoke(currency)
         }
-
-        etCurrencyValue.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                if (etCurrencyValue.isFocused) {
-                    val currencyValue = s.toString()
-                    val replace = currencyValue.replace(",", "")
-                    inputChangeListener?.invoke(replace)
-                }
-            }
-        })
-
     }
 
 
@@ -97,7 +82,20 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
         val bigDecimal = BigDecimal(value)
         val df = DecimalFormat("#,##0.00")
         return df.format(bigDecimal).replace(".00", "")
+    }
 
+    fun onAttach(){
+        etCurrencyValue.addTextChangedListener(textWatcher)
+        textWatcherDisposable = textWatcher.observeTextChanges()
+            .filter { etCurrencyValue.isFocused }
+            .map { it.replace(",", "") }
+            .subscribe { inputChangeListener?.invoke(it) }
+    }
+
+    fun onDetach() {
+        textWatcherDisposable?.dispose()
+        textWatcherDisposable = null
+        etCurrencyValue.removeTextChangedListener(textWatcher)
     }
 
 }
