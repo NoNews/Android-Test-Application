@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.disposables.Disposable
 import ru.alexbykov.revoluttest.R
 import ru.alexbykov.revoluttest.common.presentation.RxSimpleTextWather
@@ -28,6 +29,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     private var tvCode: TextView = itemView.findViewById(R.id.tv_code)
     private var tvDisplayName: TextView = itemView.findViewById(R.id.tv_display_name)
     private var etCurrentValue: EditText = itemView.findViewById(R.id.tv_currency_value)
+    private var ivCountry: CircleImageView = itemView.findViewById(R.id.iv_country)
 
 
     private var textWatcherDisposable: Disposable? = null
@@ -51,8 +53,11 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
 
     private fun setupUi(currency: CurrencyDetail, base: Boolean) {
-        updateCode(currency.code)
+
+        val code = currency.code
+        updateCode(code)
         updateName(currency.displayName)
+        ivCountry.setImageResource(CurrencyImage.from(code))
         updateCalculatedValue(currency.calculatedValue, base)
     }
 

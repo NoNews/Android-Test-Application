@@ -77,6 +77,8 @@ class CurrenciesInteractorImpl
 
     private fun getDisplayName(code: String) = Currency.getInstance(code).displayName
 
+    private fun getCountryCode(currencyCode:String) = Locale.getDefault().getDisplayCountry()
+
     private fun calculateCurrencyValue(baseCurrencyCount: Float, value: Float, isBase: Boolean): Float {
         if (isBase) {
             return baseCurrencyCount
