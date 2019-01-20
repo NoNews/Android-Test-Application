@@ -22,7 +22,9 @@ class CurrenciesPresenter
 
     override fun onFirstViewAttach() {
         viewState.showState(CurrenciesState.PROGRESS)
+    }
 
+    override fun onAttach() {
         currenciesDisposable = currenciesInteractor.observeCurrencies()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -35,7 +37,6 @@ class CurrenciesPresenter
         if (currency.name == currentBaseCurrency) {
             return
         }
-
         disposeCurrencies()
         currenciesDisposable = currenciesInteractor.changeBaseCurrency(currency)
             .andThen(currenciesInteractor.observeCurrencies())
@@ -48,7 +49,7 @@ class CurrenciesPresenter
         val disposable = currenciesInteractor.changeBaseCurrencyValue(it)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ onCurrenciesChanged(it) }, { it.printStackTrace() })
-        disposeOnPause(disposable)
+        disposeOnDetach(disposable)
     }
 
     private fun onCurrenciesChanged(it: CurrencyBusinessResponse) {
@@ -62,7 +63,7 @@ class CurrenciesPresenter
         currenciesDisposable = null
     }
 
-    override fun onDestroy() {
+    override fun onDetach() {
         disposeCurrencies()
     }
 }

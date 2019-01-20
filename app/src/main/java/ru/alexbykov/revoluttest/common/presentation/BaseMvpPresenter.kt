@@ -9,13 +9,27 @@ open class BaseMvpPresenter<V : MvpView> : MvpPresenter<V>() {
 
     private val compositeDisposable by lazy { CompositeDisposable() }
 
-    protected fun disposeOnPause(disposable: Disposable) {
+    protected fun disposeOnDetach(disposable: Disposable) {
         compositeDisposable.add(disposable)
     }
 
-    override fun detachView(view: V) {
-        compositeDisposable.dispose()
-        super.detachView(view)
+    override fun attachView(view: V) {
+        super.attachView(view)
+        onAttach()
     }
+
+    open fun onAttach() {
+
+    }
+
+    override fun detachView(view: V) {
+        super.detachView(view)
+        onDetach()
+    }
+
+    open fun onDetach() {
+        compositeDisposable.dispose()
+    }
+
 
 }
