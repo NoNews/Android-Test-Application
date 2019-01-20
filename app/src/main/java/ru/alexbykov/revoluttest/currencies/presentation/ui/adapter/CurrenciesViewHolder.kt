@@ -72,19 +72,8 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     }
 
     fun updateCalculatedValue(value: Double, isBase: Boolean) {
-
-
-        if (isBase) {
-            if (etCurrentValue.length() > MAX_LENGTH_BASE_CURRENCY) {
-                etCurrentValue.setMaxLength(MAX_LENGTH_BASE_CURRENCY)
-                return
-            }
-        } else {
-            etCurrentValue.setMaxLength(MAX_LENGTH_OTHER_CURRENCIES)
-        }
-
         etCurrentValue.setEditTextEnabled(isBase || etCurrentValue.isFocused || value > 0.00)
-        if (etCurrentValue.isFocused && etCurrentValue.text.isNotEmpty()) {
+        if (etCurrentValue.isFocused) {
             return
         }
 

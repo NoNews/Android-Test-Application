@@ -9,6 +9,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
+import androidx.annotation.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -81,6 +82,18 @@ public class CurrencyEditText extends EditText {
         }
     }
 
+    public void setCurrencyText(String text,
+                                @Nullable String pattern) {
+
+        if (pattern == null) {
+            currencyTextWatcher.setCurrencyText(text);
+        } else {
+            final BigDecimal bigDecimal1 = new BigDecimal(text);
+            final DecimalFormat decimalFormat = new DecimalFormat();
+            setText(decimalFormat.format(bigDecimal1).replace(".00000", ""));
+        }
+    }
+
     private static class CurrencyTextWatcher implements TextWatcher {
         private final EditText editText;
         private String previousNumber;
@@ -111,11 +124,15 @@ public class CurrencyEditText extends EditText {
         @Override
         public void afterTextChanged(Editable editable) {
 
-            if (!editText.hasFocus()){
+            if (!editText.hasFocus()) {
                 return;
             }
 
-            String str = editable.toString();
+
+            setCurrencyText(editable.toString());
+        }
+
+        public void setCurrencyText(String str) {
             if (str.length() < prefix.length()) {
                 editText.setText(prefix);
                 editText.setSelection(prefix.length());
@@ -157,7 +174,7 @@ public class CurrencyEditText extends EditText {
             }
             BigDecimal parsed = new BigDecimal(str);
             // example pattern VND #,###.00
-            DecimalFormat formatter = new DecimalFormat("#,###." + getDecimalPattern(str),
+            DecimalFormat formatter = new DecimalFormat("#,###0." + getDecimalPattern(str),
                     new DecimalFormatSymbols(Locale.US));
             formatter.setRoundingMode(RoundingMode.DOWN);
             return formatter.format(parsed);
