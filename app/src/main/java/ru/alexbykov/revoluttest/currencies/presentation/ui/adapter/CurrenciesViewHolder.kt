@@ -19,7 +19,7 @@ import java.text.DecimalFormat
 class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     companion object {
-        private const val LAYOUT = R.layout.new_currency
+        private const val LAYOUT = R.layout.item_currency
     }
 
 
