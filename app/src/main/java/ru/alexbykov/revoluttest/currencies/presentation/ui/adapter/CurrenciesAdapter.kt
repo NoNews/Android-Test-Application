@@ -15,7 +15,7 @@ class CurrenciesAdapter(
 
     companion object {
         const val EXTRAS_CURRENCY_CALCULATED_VALUE = "extras_value_key"
-        const val WRONG_CURRENCY_VALUE = -1F
+        const val WRONG_CURRENCY_VALUE = -1.0
     }
 
     private var inputClickListener: ((CurrencyDetail) -> Unit)? = null
@@ -40,7 +40,7 @@ class CurrenciesAdapter(
 
         if (bundle is Bundle) {
             if (bundle.containsKey(EXTRAS_CURRENCY_CALCULATED_VALUE)) {
-                val value = bundle.getFloat(EXTRAS_CURRENCY_CALCULATED_VALUE, WRONG_CURRENCY_VALUE)
+                val value = bundle.getDouble(EXTRAS_CURRENCY_CALCULATED_VALUE, WRONG_CURRENCY_VALUE)
                 holder.updateCalculatedValue(value, isBase(position))
             }
         } else {

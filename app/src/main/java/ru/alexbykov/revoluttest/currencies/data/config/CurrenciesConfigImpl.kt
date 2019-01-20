@@ -11,7 +11,7 @@ class CurrenciesConfigImpl @Inject internal constructor() : CurrenciesConfig {
         return BuildConfig.CURRENCY_LONG_POLLING_TIME_IN_SECONDS
     }
 
-    override fun getBaseCurrencyCount(): Float {
+    override fun getBaseCurrencyCount(): Double {
         return BuildConfig.BASE_CURRENCY_DEFAULT_COUNT
     }
 

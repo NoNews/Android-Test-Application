@@ -20,7 +20,7 @@ class CurrenciesDiffUtilItemCallback : DiffUtil.ItemCallback<CurrencyDetail>() {
         val bundle = Bundle()
 
         if (oldItem.calculatedValue != newItem.calculatedValue) {
-            bundle.putFloat(CurrenciesAdapter.EXTRAS_CURRENCY_CALCULATED_VALUE, newItem.calculatedValue)
+            bundle.putDouble(CurrenciesAdapter.EXTRAS_CURRENCY_CALCULATED_VALUE, newItem.calculatedValue)
         }
 
         if (bundle.isEmpty) {

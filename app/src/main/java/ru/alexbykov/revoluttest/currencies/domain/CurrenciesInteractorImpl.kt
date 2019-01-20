@@ -33,9 +33,9 @@ class CurrenciesInteractorImpl
     override fun changeBaseCurrencyValue(baseCurrencyCount: String): Single<CurrencyBusinessResponse> {
 
         val count = if (baseCurrencyCount.isEmpty().or(equals("0"))) {
-            0.0F
+            0.0
         } else {
-            baseCurrencyCount.toFloat()
+            baseCurrencyCount.toDouble()
         }
         return currenciesRepository.changeBaseCurrencyValue(count)
             .map { mapToBusinessResponse(it) }
@@ -79,7 +79,7 @@ class CurrenciesInteractorImpl
 
     private fun getCountryCode(currencyCode:String) = Locale.getDefault().getDisplayCountry()
 
-    private fun calculateCurrencyValue(baseCurrencyCount: Float, value: Float, isBase: Boolean): Float {
+    private fun calculateCurrencyValue(baseCurrencyCount: Double, value: Double, isBase: Boolean): Double {
         if (isBase) {
             return baseCurrencyCount
         }

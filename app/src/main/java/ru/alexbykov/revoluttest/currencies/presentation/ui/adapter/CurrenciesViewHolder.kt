@@ -3,7 +3,6 @@ package ru.alexbykov.revoluttest.currencies.presentation.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.hdodenhof.circleimageview.CircleImageView
@@ -11,16 +10,16 @@ import io.reactivex.disposables.Disposable
 import ru.alexbykov.revoluttest.R
 import ru.alexbykov.revoluttest.common.presentation.RxSimpleTextWather
 import ru.alexbykov.revoluttest.common.presentation.setEditTextEnabled
+import ru.alexbykov.revoluttest.common.presentation.setTextCurrency
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
-import java.math.BigDecimal
-import java.text.DecimalFormat
-
 
 
 class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     companion object {
         private const val LAYOUT = R.layout.item_currency
+        private const val MAX_LENGTH_BASE_CURRENCY = 9
+        private const val MAX_LENGTH_OTHER_CURRENCIES = 20
     }
 
 
@@ -29,7 +28,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
     private var tvCode: TextView = itemView.findViewById(R.id.tv_code)
     private var tvDisplayName: TextView = itemView.findViewById(R.id.tv_display_name)
-    private var etCurrentValue: EditText = itemView.findViewById(R.id.et_currency_value)
+    private var etCurrentValue: CurrencyEditText = itemView.findViewById(R.id.et_currency_value)
     private var ivCountry: CircleImageView = itemView.findViewById(R.id.iv_country)
 
 
@@ -49,7 +48,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
     fun setupItem(currency: CurrencyDetail, isBase: Boolean) {
         setupUi(currency, isBase)
-        setupUx(currency, isBase)
+        setupUx(currency)
     }
 
 
@@ -59,9 +58,11 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
         tvCode.text = code
         ivCountry.setImageResource(CurrencyImage.from(code))
         updateCalculatedValue(currency.calculatedValue, base)
+
+
     }
 
-    private fun setupUx(currency: CurrencyDetail, base: Boolean) {
+    private fun setupUx(currency: CurrencyDetail) {
         etCurrentValue.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
                 return@setOnFocusChangeListener
@@ -70,27 +71,31 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
         }
     }
 
+    fun updateCalculatedValue(value: Double, isBase: Boolean) {
 
-    fun updateCalculatedValue(value: Float, isBase: Boolean) {
+
+        if (isBase) {
+            if (etCurrentValue.length() > MAX_LENGTH_BASE_CURRENCY) {
+                etCurrentValue.setMaxLength(MAX_LENGTH_BASE_CURRENCY)
+                return
+            }
+        } else {
+            etCurrentValue.setMaxLength(MAX_LENGTH_OTHER_CURRENCIES)
+        }
+
         etCurrentValue.setEditTextEnabled(isBase || etCurrentValue.isFocused || value > 0.00)
         if (etCurrentValue.isFocused && etCurrentValue.text.isNotEmpty()) {
             return
         }
-        val result = formatCurrency(value.toString())
-        etCurrentValue.setText(result)
-    }
 
-
-    private fun formatCurrency(value: String): String {
-        val bigDecimal = BigDecimal(value)
-        val df = DecimalFormat("#,##0.00")
-        return df.format(bigDecimal).replace(".00", "")
+        etCurrentValue.setTextCurrency(value)
     }
 
     fun onAttach() {
         etCurrentValue.addTextChangedListener(textWatcher)
         textWatcherDisposable = textWatcher.observeTextChanges()
             .filter { etCurrentValue.isFocused }
+            .filter { it != "." }
             .map { it.replace(",", "") }
             .subscribe { inputChangeListener?.invoke(it) }
     }

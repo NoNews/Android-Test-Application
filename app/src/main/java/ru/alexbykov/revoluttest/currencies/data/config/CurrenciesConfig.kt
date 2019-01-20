@@ -8,7 +8,7 @@ interface CurrenciesConfig {
      */
     fun getUpdateTime(): Long
 
-    fun getBaseCurrencyCount(): Float
+    fun getBaseCurrencyCount(): Double
 
 
     fun getDeviceCurrency(): String

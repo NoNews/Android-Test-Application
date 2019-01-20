@@ -11,6 +11,6 @@ interface CurrenciesRepository {
 
     fun observeCurrencies(): Observable<CurrencyInfo>
 
-    fun changeBaseCurrencyValue(calculatedValue: Float): Single<CurrencyInfo>
+    fun changeBaseCurrencyValue(calculatedValue: Double): Single<CurrencyInfo>
 
 }

@@ -24,7 +24,7 @@ object CurrencyImage {
     private const val KRW = "KRW"
     private const val MXN = "MXN"
     private const val MYR = "MYR"
-    private const val NOK = "NOL"
+    private const val NOK = "NOK"
     private const val NZD = "NZD"
     private const val PHP = "PHP"
     private const val PLN = "PLN"

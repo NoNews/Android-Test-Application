@@ -85,7 +85,7 @@ internal constructor(
 
         val currencies = rates.map { Currency(it.key, it.value) }.toMutableList()
         val baseCurrencyFromDatabase = currenciesStorage.getCurrency(baseCurrency)
-        currencies.add(Currency(baseCurrency, baseCurrencyFromDatabase?.value ?: Float.NEGATIVE_INFINITY))
+        currencies.add(Currency(baseCurrency, baseCurrencyFromDatabase?.value ?: Double.NEGATIVE_INFINITY))
 
         val currenciesFromDatabase = currenciesStorage.updateAndGetCurrencies(currencies)
 
@@ -108,7 +108,7 @@ internal constructor(
         }.subscribeOn(Schedulers.io())
     }
 
-    override fun changeBaseCurrencyValue(baseCurrencyCount: Float): Single<CurrencyInfo> {
+    override fun changeBaseCurrencyValue(baseCurrencyCount: Double): Single<CurrencyInfo> {
         return Single.create<CurrencyInfo> {
             val meta = currenciesStorage.getMeta()
             meta!!.baseCurrencyCount = baseCurrencyCount
