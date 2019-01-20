@@ -14,7 +14,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000"/>
+            app:civ_border_color="@android:color/black"/>
 
 
     <TextView
@@ -33,14 +33,12 @@
             app:layout_constraintStart_toEndOf="@id/iv_country"
             app:layout_constraintTop_toBottomOf="@id/tv_code"
             android:id="@+id/tv_display_name"
-            tools:text="British "
+            tools:text="Britishdjkdkdkjdkj "
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_marginTop="4dp"
-            app:layout_constraintHorizontal_bias="0.0"/>
-
+    />
 
     <EditText
             app:layout_constraintWidth_default="wrap"
@@ -48,12 +46,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:imeOptions="actionDone"
             android:inputType="numberDecimal"
-            android:text=""
+            tools:text="383883838"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:id="@+id/tv_currency_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
