@@ -48,7 +48,7 @@
             android:inputType="numberDecimal"
             tools:text="383883838"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:id="@+id/tv_currency_value"
+            android:id="@+id/et_currency_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintHorizontal_bias="1.0"

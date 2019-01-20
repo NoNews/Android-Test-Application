@@ -16,6 +16,7 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 
 
+
 class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     companion object {
@@ -28,7 +29,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
     private var tvCode: TextView = itemView.findViewById(R.id.tv_code)
     private var tvDisplayName: TextView = itemView.findViewById(R.id.tv_display_name)
-    private var etCurrentValue: EditText = itemView.findViewById(R.id.tv_currency_value)
+    private var etCurrentValue: EditText = itemView.findViewById(R.id.et_currency_value)
     private var ivCountry: CircleImageView = itemView.findViewById(R.id.iv_country)
 
 
@@ -53,16 +54,11 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
 
     private fun setupUi(currency: CurrencyDetail, base: Boolean) {
-
         val code = currency.code
-        updateCode(code)
-        updateName(currency.displayName)
+        tvDisplayName.text = currency.displayName
+        tvCode.text = code
         ivCountry.setImageResource(CurrencyImage.from(code))
         updateCalculatedValue(currency.calculatedValue, base)
-    }
-
-    private fun updateName(displayName: String) {
-        tvDisplayName.text = displayName
     }
 
     private fun setupUx(currency: CurrencyDetail, base: Boolean) {
@@ -74,10 +70,6 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
         }
     }
 
-
-    fun updateCode(code: String) {
-        tvCode.text = code
-    }
 
     fun updateCalculatedValue(value: Float, isBase: Boolean) {
         etCurrentValue.setEditTextEnabled(isBase || etCurrentValue.isFocused || value > 0.00)
