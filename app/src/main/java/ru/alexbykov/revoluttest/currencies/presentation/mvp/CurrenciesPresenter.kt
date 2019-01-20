@@ -35,7 +35,7 @@ class CurrenciesPresenter
 
     fun onClickInput(currency: CurrencyDetail) {
         if (currency.name == currentBaseCurrency) {
-            return
+            throw IllegalStateException("You must not  call input when it doesn't changed")
         }
         disposeCurrencies()
         currenciesDisposable = currenciesInteractor.changeBaseCurrency(currency)

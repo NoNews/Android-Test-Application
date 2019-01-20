@@ -84,7 +84,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
         return df.format(bigDecimal).replace(".00", "")
     }
 
-    fun onAttach(){
+    fun onAttach() {
         etCurrencyValue.addTextChangedListener(textWatcher)
         textWatcherDisposable = textWatcher.observeTextChanges()
             .filter { etCurrencyValue.isFocused }
@@ -93,6 +93,7 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     }
 
     fun onDetach() {
+        etCurrencyValue.clearFocus()
         textWatcherDisposable?.dispose()
         textWatcherDisposable = null
         etCurrencyValue.removeTextChangedListener(textWatcher)

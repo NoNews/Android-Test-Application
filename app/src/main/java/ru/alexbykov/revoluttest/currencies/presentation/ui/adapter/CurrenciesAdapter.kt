@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
 
 class CurrenciesAdapter(
-    val inflater: LayoutInflater,
+    private val inflater: LayoutInflater,
     diffCallback: DiffUtil.ItemCallback<CurrencyDetail>
 ) : ListAdapter<CurrencyDetail, CurrenciesViewHolder>(diffCallback) {
 

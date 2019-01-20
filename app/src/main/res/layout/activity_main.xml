@@ -32,6 +32,7 @@
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+            android:scrollbars="vertical"
             android:splitMotionEvents="false"
             tools:visibility="visible"
             android:visibility="gone"

@@ -1,7 +1,6 @@
 package ru.alexbykov.revoluttest.currencies.presentation.ui
 
 import android.os.Bundle
-
 import android.view.LayoutInflater
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
