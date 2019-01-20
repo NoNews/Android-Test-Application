@@ -27,7 +27,7 @@ class CurrenciesInteractorImpl
     override fun changeBaseCurrency(
         baseCurrency: CurrencyDetail
     ): Completable {
-        return currenciesRepository.changeCurrency(baseCurrency.name)
+        return currenciesRepository.changeCurrency(baseCurrency.code)
     }
 
     override fun changeBaseCurrencyValue(baseCurrencyCount: String): Single<CurrencyBusinessResponse> {
@@ -47,19 +47,23 @@ class CurrenciesInteractorImpl
         val currenciesDetail = currencyInfo.currencies
             .map {
                 val currencyValue = it.value
-                val currencyName = it.name
+                val code = it.name
                 val isBase = it.name == meta.baseCurrency
+
+                val displayName = getDisplayName(code)
+                val calculateCurrencyValue = calculateCurrencyValue(meta.baseCurrencyCount, it.value, isBase)
                 CurrencyDetail(
-                    currencyName,
+                    code,
+                    displayName,
                     currencyValue,
-                    calculateCurrencyValue(meta.baseCurrencyCount, it.value, isBase)
+                    calculateCurrencyValue
                 )
             }
 
         var baseCurrencyPosition = 0
 
         currenciesDetail.forEachIndexed { index, currencyDetail ->
-            if (currencyDetail.name == meta.baseCurrency) {
+            if (currencyDetail.code == meta.baseCurrency) {
                 baseCurrencyPosition = index
                 return@forEachIndexed
             }
@@ -70,6 +74,8 @@ class CurrenciesInteractorImpl
 
         return CurrencyBusinessResponse(meta.baseCurrency, meta.updateTime, currenciesDetail)
     }
+
+    private fun getDisplayName(code: String) = Currency.getInstance(code).displayName
 
     private fun calculateCurrencyValue(baseCurrencyCount: Float, value: Float, isBase: Boolean): Float {
         if (isBase) {

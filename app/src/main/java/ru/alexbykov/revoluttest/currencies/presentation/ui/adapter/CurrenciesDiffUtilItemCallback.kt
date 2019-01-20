@@ -9,7 +9,7 @@ class CurrenciesDiffUtilItemCallback : DiffUtil.ItemCallback<CurrencyDetail>() {
 
 
     override fun areItemsTheSame(oldItem: CurrencyDetail, newItem: CurrencyDetail): Boolean {
-        return oldItem.name == newItem.name
+        return oldItem.code == newItem.code
     }
 
     override fun areContentsTheSame(oldItem: CurrencyDetail, newItem: CurrencyDetail): Boolean {
@@ -21,10 +21,6 @@ class CurrenciesDiffUtilItemCallback : DiffUtil.ItemCallback<CurrencyDetail>() {
 
         if (oldItem.calculatedValue != newItem.calculatedValue) {
             bundle.putFloat(CurrenciesAdapter.EXTRAS_CURRENCY_CALCULATED_VALUE, newItem.calculatedValue)
-        }
-
-        if (oldItem.name != newItem.name) {
-            bundle.putString(CurrenciesAdapter.EXTRAS_CURRENCY_NAME, newItem.name)
         }
 
         if (bundle.isEmpty) {

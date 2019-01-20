@@ -15,7 +15,6 @@ class CurrenciesAdapter(
 
     companion object {
         const val EXTRAS_CURRENCY_CALCULATED_VALUE = "extras_value_key"
-        const val EXTRAS_CURRENCY_NAME = "extras_name_key"
         const val WRONG_CURRENCY_VALUE = -1F
     }
 
@@ -40,11 +39,6 @@ class CurrenciesAdapter(
         val bundle = payloads.first()
 
         if (bundle is Bundle) {
-            if (bundle.containsKey(EXTRAS_CURRENCY_NAME)) {
-                val name = bundle.getString(EXTRAS_CURRENCY_NAME)!!
-                holder.updateName(name)
-            }
-
             if (bundle.containsKey(EXTRAS_CURRENCY_CALCULATED_VALUE)) {
                 val value = bundle.getFloat(EXTRAS_CURRENCY_CALCULATED_VALUE, WRONG_CURRENCY_VALUE)
                 holder.updateCalculatedValue(value, isBase(position))

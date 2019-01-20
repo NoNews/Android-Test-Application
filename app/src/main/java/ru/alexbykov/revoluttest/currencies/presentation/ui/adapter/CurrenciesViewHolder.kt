@@ -25,8 +25,9 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     private var inputClickListener: ((CurrencyDetail) -> Unit)? = null
     private var inputChangeListener: ((String) -> Unit)? = null
 
-    private var tvCurrencyName: TextView = itemView.findViewById(R.id.tv_currency_name)
-    private var etCurrencyValue: EditText = itemView.findViewById(R.id.tv_currency_value)
+    private var tvCode: TextView = itemView.findViewById(R.id.tv_code)
+    private var tvDisplayName: TextView = itemView.findViewById(R.id.tv_display_name)
+    private var etCurrentValue: EditText = itemView.findViewById(R.id.tv_currency_value)
 
 
     private var textWatcherDisposable: Disposable? = null
@@ -50,12 +51,17 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
 
 
     private fun setupUi(currency: CurrencyDetail, base: Boolean) {
-        updateName(currency.name)
+        updateCode(currency.code)
+        updateName(currency.displayName)
         updateCalculatedValue(currency.calculatedValue, base)
     }
 
+    private fun updateName(displayName: String) {
+        tvDisplayName.text = displayName
+    }
+
     private fun setupUx(currency: CurrencyDetail, base: Boolean) {
-        etCurrencyValue.setOnFocusChangeListener { v, hasFocus ->
+        etCurrentValue.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
                 return@setOnFocusChangeListener
             }
@@ -64,17 +70,17 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     }
 
 
-    fun updateName(name: String) {
-        tvCurrencyName.text = name
+    fun updateCode(code: String) {
+        tvCode.text = code
     }
 
     fun updateCalculatedValue(value: Float, isBase: Boolean) {
-        etCurrencyValue.setEditTextEnabled(isBase || etCurrencyValue.isFocused || value > 0.00)
-        if (etCurrencyValue.isFocused && etCurrencyValue.text.isNotEmpty()) {
+        etCurrentValue.setEditTextEnabled(isBase || etCurrentValue.isFocused || value > 0.00)
+        if (etCurrentValue.isFocused && etCurrentValue.text.isNotEmpty()) {
             return
         }
         val result = formatCurrency(value.toString())
-        etCurrencyValue.setText(result)
+        etCurrentValue.setText(result)
     }
 
 
@@ -85,18 +91,18 @@ class CurrenciesViewHolder private constructor(itemView: View) : RecyclerView.Vi
     }
 
     fun onAttach() {
-        etCurrencyValue.addTextChangedListener(textWatcher)
+        etCurrentValue.addTextChangedListener(textWatcher)
         textWatcherDisposable = textWatcher.observeTextChanges()
-            .filter { etCurrencyValue.isFocused }
+            .filter { etCurrentValue.isFocused }
             .map { it.replace(",", "") }
             .subscribe { inputChangeListener?.invoke(it) }
     }
 
     fun onDetach() {
-        etCurrencyValue.clearFocus()
+        etCurrentValue.clearFocus()
         textWatcherDisposable?.dispose()
         textWatcherDisposable = null
-        etCurrencyValue.removeTextChangedListener(textWatcher)
+        etCurrentValue.removeTextChangedListener(textWatcher)
     }
 
 }
