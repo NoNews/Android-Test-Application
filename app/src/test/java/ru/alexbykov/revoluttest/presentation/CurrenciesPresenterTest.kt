@@ -1,4 +1,4 @@
-package ru.alexbykov.revoluttest.mvp
+package ru.alexbykov.revoluttest.presentation
 
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.times
@@ -15,6 +15,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
+import ru.alexbykov.revoluttest.StubProvider
 import ru.alexbykov.revoluttest.TrampolineSchedulerRule
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyBusinessResponse
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
@@ -44,7 +45,7 @@ class CurrenciesPresenterTest {
     private val stubRusResponse = CurrencyBusinessResponse("RUB", "2017-12-12", Collections.emptyList())
     private val stubEurResponse = CurrencyBusinessResponse("EUR", "2017-12-12", Collections.emptyList())
 
-    private val stubCurrency = CurrencyDetail("RUB", "RUS", 4444.0, 101001.0)
+    private val stubCurrency = StubProvider.stubCurrencyDetail()
 
 
     private lateinit var presenter: CurrenciesPresenter

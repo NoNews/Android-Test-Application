@@ -24,9 +24,7 @@ class CurrenciesInteractorImpl
     }
 
 
-    override fun changeBaseCurrency(
-        baseCurrency: CurrencyDetail
-    ): Completable {
+    override fun changeBaseCurrency(baseCurrency: CurrencyDetail): Completable {
         return currenciesRepository.changeCurrency(baseCurrency.code)
     }
 
