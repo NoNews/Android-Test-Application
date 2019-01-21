@@ -1,5 +1,6 @@
 package ru.alexbykov.revoluttest.common.presentation
 
+import androidx.annotation.VisibleForTesting
 import com.arellomobile.mvp.MvpPresenter
 import com.arellomobile.mvp.MvpView
 import io.reactivex.disposables.CompositeDisposable
@@ -29,6 +30,11 @@ open class BaseMvpPresenter<V : MvpView> : MvpPresenter<V>() {
 
     open fun onDetach() {
         compositeDisposable.dispose()
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    fun hasNoActiveDisposables(): Boolean {
+        return compositeDisposable.size() == 0
     }
 
 
