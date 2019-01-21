@@ -7,6 +7,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import ru.alexbykov.revoluttest.common.data.network.InternetInfoProvider
 import ru.alexbykov.revoluttest.common.data.network.InternetInfoProviderImpl
 import ru.alexbykov.revoluttest.common.data.network.NetworkClient
+import ru.alexbykov.revoluttest.common.data.network.NetworkClientImpl
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -20,7 +21,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRestApi(okHttpClient: OkHttpClient): NetworkClient = NetworkClient(okHttpClient)
+    fun provideRestApi(okHttpClient: OkHttpClient): NetworkClient = NetworkClientImpl(okHttpClient)
 
     @Provides
     @Singleton

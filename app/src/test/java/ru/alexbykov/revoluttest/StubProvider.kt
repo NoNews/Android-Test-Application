@@ -1,6 +1,7 @@
 package ru.alexbykov.revoluttest
 
 import ru.alexbykov.revoluttest.currencies.data.CurrencyInfo
+import ru.alexbykov.revoluttest.currencies.data.network.entity.CurrenciesResponse
 import ru.alexbykov.revoluttest.currencies.data.storage.entity.Currency
 import ru.alexbykov.revoluttest.currencies.data.storage.entity.CurrencyMeta
 import ru.alexbykov.revoluttest.currencies.domain.entity.CurrencyDetail
@@ -17,12 +18,20 @@ object StubProvider {
     const val EUR_NAME = "Euro"
     const val USD_NAME = "US Dollar"
 
-    fun stubCurrencyDetail() = CurrencyDetail("RUB", "Russian Ruble", 4444.0, 101001.0)
+    fun stubCurrencyDetail() = CurrencyDetail(RUB_CODE, "Russian Ruble", 4444.0, 101001.0)
 
     fun provideCurrencyInfoBasedRuble(newCurrencyCount: Double) =
         CurrencyInfo(provideCurrencyMeta(newCurrencyCount), provideCurrencies())
 
+
+    fun provideCurrenciesRepsponse(base: String) =
+        CurrenciesResponse(base, STUB_DATE, mapOf(USD_CODE to USD_EXCHANGE_RATE, EUR_CODE to EUR_EXCHANGE_RATE))
+
     private fun provideCurrencyMeta(newCurrencyCount: Double) = CurrencyMeta(RUB_CODE, STUB_DATE, newCurrencyCount)
 
-    private fun provideCurrencies() = listOf(Currency(EUR_CODE, EUR_EXCHANGE_RATE), Currency(USD_CODE, USD_EXCHANGE_RATE))
+    fun provideCurrencies() =
+        listOf(Currency(EUR_CODE, EUR_EXCHANGE_RATE), Currency(USD_CODE, USD_EXCHANGE_RATE))
+
+
+    fun provideMeta() = CurrencyMeta(StubProvider.RUB_CODE, StubProvider.STUB_DATE, Double.NEGATIVE_INFINITY)
 }

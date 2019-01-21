@@ -21,13 +21,11 @@ class CurrenciesRepositoryImpl
 @Inject
 internal constructor(
     private val networkClient: NetworkClient,
-    databaseClient: DatabaseClient,
+    private val databaseClient: DatabaseClient,
     private val currenciesConfig: CurrenciesConfig,
     private val internetProvider: InternetInfoProvider
 ) : CurrenciesRepository {
 
-
-    private val currenciesStorage = databaseClient.currencies()
 
     override fun observeCurrencies(): Observable<CurrencyInfo> {
         return Observable.concat(getCurrenciesFromDatabase(), getCurrenciesFromNetwork())
@@ -37,14 +35,15 @@ internal constructor(
         return Observable.interval(currenciesConfig.getUpdateTime(), TimeUnit.SECONDS)
             .startWith(0)
             .observeOn(Schedulers.io())
-            .map { currenciesStorage.getMeta()?.baseCurrency ?: currenciesConfig.getDeviceCurrency() }
-            .flatMapSingle { networkClient.currencyEndpoint.getLatest(it) }
+            .map { databaseClient.currencies().getMeta()?.baseCurrency ?: currenciesConfig.getDeviceCurrency() }
+            .flatMapSingle { networkClient.getCurrencyEndpoint().getLatest(it) }
             .retry()
             .map { it -> convertResponseAndSave(it) }
     }
 
     private fun getCurrenciesFromDatabase(): Observable<CurrencyInfo?> {
         return Observable.create<CurrencyInfo> {
+            val currenciesStorage = databaseClient.currencies()
             val metaData = currenciesStorage.getMeta()
             if (metaData == null) {
                 it.onComplete()
@@ -69,6 +68,7 @@ internal constructor(
 
 
     private fun convertResponseAndSave(response: CurrenciesResponse): CurrencyInfo {
+        val currenciesStorage = databaseClient.currencies()
         val rates = response.rates
         val baseCurrency = response.base
 
@@ -97,7 +97,9 @@ internal constructor(
 
 
     override fun changeCurrency(currencyName: String): Completable {
+
         return Completable.create {
+            val currenciesStorage = databaseClient.currencies()
             val meta = currenciesStorage.getMeta()
             val currency = currenciesStorage.getCurrency(currencyName)
             val oldCount = meta!!.baseCurrencyCount
@@ -110,6 +112,7 @@ internal constructor(
 
     override fun changeBaseCurrencyValue(baseCurrencyCount: Double): Single<CurrencyInfo> {
         return Single.create<CurrencyInfo> {
+            val currenciesStorage = databaseClient.currencies()
             val meta = currenciesStorage.getMeta()
             meta!!.baseCurrencyCount = baseCurrencyCount
             val updatedMeta = currenciesStorage.updateAndGetMeta(meta)
