@@ -30,7 +30,7 @@ class CurrenciesInteractorImpl
 
     override fun changeBaseCurrencyValue(baseCurrencyCount: String): Single<CurrencyBusinessResponse> {
 
-        val count = if (baseCurrencyCount.isEmpty().or(equals("0"))) {
+        val count = if (baseCurrencyCount.isEmpty()) {
             0.0
         } else {
             baseCurrencyCount.toDouble()
